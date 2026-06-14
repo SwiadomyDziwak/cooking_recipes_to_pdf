@@ -1,0 +1,17 @@
+requirements.txt
+notes.md
+.last_session_log
+
+.env
+.venv
+
+data/*
+!data/sample.json
+pdfs/*
+__pychache__/
+
+*.sqlite3
+*.db
+*.tmp
+*.dll
+*.exe

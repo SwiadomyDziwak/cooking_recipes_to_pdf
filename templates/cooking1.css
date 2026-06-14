@@ -1,0 +1,42 @@
+* {
+    box-sizing: border-box;
+}
+
+@page {
+    margin: 5mm;
+    size: A4;
+}
+
+html { font-size: 11px; }
+
+html, body {
+    margin: 0;
+    padding: 1rem 4.5rem;
+}
+
+h1 { text-align: center; }
+
+svg {
+    width: auto;
+    height: 1.5rem;
+    vertical-align: middle;
+}
+
+.ingredients { break-inside: avoid; }
+.ingredients h2 { margin: 0; }
+.ingredients h3 { margin-bottom: 0.4rem; }
+.ingredient-details {
+    width: 100%;
+    margin: 0.3rem 0 0.3rem 0;
+    padding: 0 1.6rem;
+    display: flex;
+    flex-direction: row;
+}
+.left { flex: 0 0 auto; }
+.right { flex: 0 0 auto; }
+.separator {
+    flex: 1 1 auto;
+    border-bottom: 1px dotted black;
+}
+
+.preparing-steps { break-inside: avoid; }
