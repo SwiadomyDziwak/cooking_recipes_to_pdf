@@ -5,5 +5,5 @@ class Recipe:
         self.dish_name: str = data["dish_name"]
         self.cousine: list[str] = data["cousine"]
         self.servings: int = data["servings"]
-        self.ingredients: dict = data["ingredients"]
+        self.ingredients: dict[str, dict[str, str]] = data["ingredients"]
         self.preparing_steps: list[str] = data["preparing_steps"]
