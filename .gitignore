@@ -8,7 +8,7 @@ notes.md
 data/*
 !data/sample.json
 pdfs/*
-__pychache__/
+__pycache__/
 
 *.sqlite3
 *.db

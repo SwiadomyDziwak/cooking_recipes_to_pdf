@@ -18,13 +18,25 @@ def main() -> None:
     with open(target_ui_path) as ui_translation:
         ui: dict[str, str] = json.load(ui_translation)
 
-    with open("data/kremowe_kokosowe_ramen_z_kurczakiem_katsu.json") as data:
-        recipe: Recipe = Recipe(json.load(data))
+    with open("data/ziemniaczki_w_sosie_musztardowym.json") as data:
+        recipe_data: dict = json.load(data)
+    recipe: Recipe = Recipe()
+    recipe.set_dish_name(recipe_data["dish_name"])
+    recipe.set_servings(recipe_data["servings"])
+    for tag in recipe_data["tags"]:
+        recipe.add_tag(tag)
+    for category, ingredients in recipe_data["ingredients"].items():
+        recipe.add_ingredient_category(category)
+        for ingredient, amount in ingredients.items():
+            recipe.add_ingredient(category, ingredient, amount)
+    for step in recipe_data["preparing_steps"]:
+        recipe.add_preparing_step(step)
+
     with open("templates/cooking1.html") as temp:
         template: Template = Template(temp.read())
     html: str = template.render(recipe=recipe, ui=ui)
     HTML(string=html).write_pdf(
-            "pdfs/kremowe_kokosowe_ramen_z_kurczakiem_katsu.pdf",
+            "pdfs/ziemniaczki_w_sosie_musztardowym.pdf",
             stylesheets=[CSS("templates/cooking1.css")])
 
 if __name__ == "__main__":

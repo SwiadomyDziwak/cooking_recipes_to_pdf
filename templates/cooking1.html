@@ -12,8 +12,12 @@
                 {{ ui["servings"] }}: {{ recipe.servings }}</span>
             <span class="data-separator"></span>
             <span class="right">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M96 160L96 92.5C96 85.6 101.6 80 108.5 80C110.8 80 113 80.6 115 81.8L154 105.2C178.9 120.1 207.3 128 236.3 128L403.7 128C432.7 128 461.2 120.1 486 105.2L525 81.8C526.9 80.6 529.2 80 531.4 80C538.3 80 543.9 85.6 543.9 92.5L544 160C544 195.3 515.3 224 480 224L480 288L496 288C513.7 288 528 302.3 528 320C528 337.7 513.7 352 496 352L480 352L480 544C480 561.7 465.7 576 448 576C430.3 576 416 561.7 416 544L416 352L224 352L224 544C224 561.7 209.7 576 192 576C174.3 576 160 561.7 160 544L160 352L144 352C126.3 352 112 337.7 112 320C112 302.3 126.3 288 144 288L160 288L160 224C124.7 224 96 195.3 96 160zM224 288L288 288L288 224L224 224L224 288zM352 288L416 288L416 224L352 224L352 288z"/></svg>
-            {% for category in recipe.cousine %}{{ category }}{% endfor %}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M96.5 160L96.5 309.5C96.5 326.5 103.2 342.8 115.2 354.8L307.2 546.8C332.2 571.8 372.7 571.8 397.7 546.8L547.2 397.3C572.2 372.3 572.2 331.8 547.2 306.8L355.2 114.8C343.2 102.7 327 96 310 96L160.5 96C125.2 96 96.5 124.7 96.5 160zM208.5 176C226.2 176 240.5 190.3 240.5 208C240.5 225.7 226.2 240 208.5 240C190.8 240 176.5 225.7 176.5 208C176.5 190.3 190.8 176 208.5 176z"/></svg>
+                {% for tag in recipe.tags %}
+                    {{ tag }}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </span>
             <span class="data-separator"></span>
         </p>
         <div class="ingredients">
