@@ -1,0 +1,8 @@
+{
+    "servings": "Servings",
+    "ingredients": "Ingredients",
+    "preparing_steps": "Preparing",
+    "error_tag_exists": "This tag already exists",
+    "error_category_exists": "This category already exists",
+    "error_wrong_category": "Wrong ingredient's category/This category doesn't exist"
+}

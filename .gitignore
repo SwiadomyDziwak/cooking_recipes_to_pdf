@@ -7,6 +7,7 @@ notes.md
 
 data/*
 !data/sample.json
+!data/ui/
 pdfs/*
 __pycache__/
 
