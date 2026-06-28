@@ -4,5 +4,7 @@
     "preparing_steps": "Przygotowanie",
     "error_tag_exists": "Ten tag już istnieje",
     "error_category_exists": "Ta kategoria już istnieje",
-    "error_wrong_category": "Błędna kategoria składnika/Taka kategoria nie istnieje"
+    "error_wrong_category": "Błędna kategoria składnika/Taka kategoria nie istnieje",
+    "ui_option_convert": "Konwertuj na pdf",
+    "ui_option_new_recipe": "Nowy przepis"
 }

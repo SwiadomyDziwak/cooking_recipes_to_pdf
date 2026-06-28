@@ -5,6 +5,9 @@
 
     <body>
         <h1>{{ recipe.dish_name }}</h1>
+        {% if recipe.photo %}
+            <img src="file:///home/../../{{ recipe.photo }}" class="preview-photo">
+        {% endif %}
         <p class="recipe-data">
             <span class="data-separator"></span>
             <span class="left">

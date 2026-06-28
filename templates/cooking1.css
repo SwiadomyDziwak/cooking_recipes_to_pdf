@@ -26,6 +26,15 @@ svg {
     vertical-align: middle;
 }
 
+.preview-photo {
+    width: auto;
+    height: 15rem;
+    display: block;
+    margin: auto;
+    border-radius: 1rem;
+    border: 1px dashed black;
+}
+
 .recipe-data {
     padding: 0.5rem;
     display: flex;

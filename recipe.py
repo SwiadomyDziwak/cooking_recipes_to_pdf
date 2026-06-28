@@ -1,8 +1,11 @@
+from os import path
+
 class Recipe:
     def __init__(self) -> None:
         self.ui: dict[str, str] = None
         self.separator: str = "-" * 15
         self.dish_name: str = None
+        self.photo: str = None
         self.tags: list[str] = []
         self.servings: int = 0
         self.ingredients: dict[str, dict[str, str]] = {}
@@ -38,6 +41,11 @@ class Recipe:
 
     def add_preparing_step(self, step: str) -> None:
         self.preparing_steps.append(step)
+
+    def add_photo(self, photo: str) -> None:
+        if photo is None:
+            return
+        self.photo = path.abspath(path.join("data", photo))
 
     # ---
     # Showing data on call
