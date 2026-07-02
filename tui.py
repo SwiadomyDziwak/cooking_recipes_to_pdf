@@ -2,21 +2,24 @@ from os import path
 import json
 
 class TUI:
-    def __init__(self, lang: str="pl") -> None:
-        self.lang: str = lang
-        self.ui: dict[str, str] = self._load_translations(lang)
-        self.options: dict[str, str] = {
-                "1": self.ui["ui_option_convert"],
-                "2": self.ui["ui_option_new_recipe"],
-                }
+    def __init__(self) -> None:
+        self.options: dict[str, str] = {}
+        self.err: str = "\033[91m[\u2718]\033[0m"
+        self.ok: str = "\033[92m[\u2714]\033[0m"
+        self.info: str = "\033[96m[i]\033[0m"
+        self.warn: str = "\033[93m[!]\033[0m"
 
-    def _load_translations(self, lang: str) -> dict[str, str]:
-        # Reads a data/ui file for a selected language and loads ui translations
-        filepath = path.join("data", "ui", lang) + ".json"
-        with open(filepath) as translations_file:
-            ui: dict[str, str] = json.load(translations_file)
-        return ui
+    def add_option(self, option: str) -> str:
+        if option is None:
+            return f"{self.warn} Option cannot be empty"
+        options_lenght: int = len(self.options) + 1
+        self.options[options_lenght] = option
+        return f"{self.ok} Option added"
 
-    def show_main_menu(self) -> None:
+    def clear_options(self) -> str:
+        self.options = {}
+        return f"{self.ok} Options cleared"
+
+    def show_options(self) -> None:
         for number, option in self.options.items():
             print(f"{number}. {option}")
