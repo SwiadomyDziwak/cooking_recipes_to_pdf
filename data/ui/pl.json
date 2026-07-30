@@ -5,6 +5,16 @@
     "error_tag_exists": "Ten tag już istnieje",
     "error_category_exists": "Ta kategoria już istnieje",
     "error_wrong_category": "Błędna kategoria składnika/Taka kategoria nie istnieje",
-    "ui_option_convert": "Konwertuj na pdf",
-    "ui_option_new_recipe": "Nowy przepis"
+    "show_recipes_list": "Pokaż listę przepisów",
+    "convert": "Konwertuj na pdf",
+    "new_recipe": "Nowy przepis",
+    "edit_recipe": "Edytuj przepis",
+    "back": "Powrót",
+    "quit": "Wyjdź",
+    "invalid_choice": "Niepoprawny wybór",
+    "select_option": "Wybierz opcję",
+    "no_recipes_found": "Nie znaleziono żadnych przepisów",
+    "active_recipe": "Wybrany przepis",
+    "render_pdf": "Wygeneruj PDF",
+    "show_recipe_info": "Pokaż szczegóły przepisu"
 }

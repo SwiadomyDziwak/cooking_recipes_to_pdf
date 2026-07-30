@@ -1,25 +1,40 @@
-from os import path
-import json
+from typing import Any
+from collections.abc import Callable
+
+class Option:
+    def __init__(self, display: str, func: Callable, **kwargs) -> None:
+        self.display: str = display
+        self.func: Callable = func
+        self.kwargs = kwargs
+    def __str__(self) -> str:
+        return self.display
+    def run(self) -> Any:
+        return self.func(**self.kwargs)
 
 class TUI:
     def __init__(self) -> None:
-        self.options: dict[str, str] = {}
-        self.err: str = "\033[91m[\u2718]\033[0m"
-        self.ok: str = "\033[92m[\u2714]\033[0m"
-        self.info: str = "\033[96m[i]\033[0m"
-        self.warn: str = "\033[93m[!]\033[0m"
+        self.options: dict[str, Option] = {}
+        self.statuses: list[str] = []
+        self.app_on: bool = False
 
-    def add_option(self, option: str) -> str:
-        if option is None:
-            return f"{self.warn} Option cannot be empty"
-        options_lenght: int = len(self.options) + 1
-        self.options[options_lenght] = option
-        return f"{self.ok} Option added"
+    def add_option(self, shortcut: str, option: Option) -> None:
+        self.options[shortcut] = option
 
-    def clear_options(self) -> str:
-        self.options = {}
-        return f"{self.ok} Options cleared"
+    def clear_options(self) -> None:
+        self.options.clear()
 
     def show_options(self) -> None:
-        for number, option in self.options.items():
-            print(f"{number}. {option}")
+        for key, option in self.options.items():
+            print(f"[ \033[95m{key.upper()}\033[0m ] {option.display}")
+        return self.options
+
+    def show_status(self) -> None:
+        if not self.statuses:
+            return
+        for status in self.statuses:
+            print(status)
+        self.statuses.clear()
+        print()
+
+    def add_status(self, status) -> None:
+        self.statuses.append(status)

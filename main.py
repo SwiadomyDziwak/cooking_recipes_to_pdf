@@ -1,69 +1,57 @@
 from jinja2 import Template
 from weasyprint import HTML, CSS
-from recipe import Recipe
+from recipe import Recipe, AppError
 import json
 from argparse import ArgumentParser
 from os import path, listdir
+from tui import TUI, Option
+import actions
+from shortcuts import Key
+
+ERR: str = "\033[91m[ \u2718 ]\033[0m"
+INFO: str = "\033[96m[i]\033[0m"
 
 def main() -> None:
 
     parser: ArgumentParser = ArgumentParser()
-    parser.add_argument("-l", "--lang", action="store", choices=["pl", "en"], required=True)
+    parser.add_argument("-l", "--lang", action="store", choices=["pl", "en"], default="en")
 
     args = parser.parse_args()
 
-    ui_translations_path: str = path.join("data", "ui")
-    target_lang: str = args.lang + ".json"
-    target_ui_path: str = path.join(ui_translations_path, target_lang)
-    with open(target_ui_path) as ui_translation:
-        ui: dict[str, str] = json.load(ui_translation)
+    # Load User Interface translations
+    ui: dict[str, str] = actions.load_translation(args.lang)
 
-    recipes_list: dict[str, str] = {}
-    no_of_recipes: int = 0
-    for file in listdir("data"):
-        filepath = path.join("data",file)
-        if path.isdir(filepath):
+    # Define and populate Text User Interface
+    tui: TUI = TUI()
+    tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], actions.get_recipes))
+    tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, tui=tui))
+    tui.app_on = True
+    prev_options: list[dict[str, Option]] = []
+
+    # Main TUI loop
+    WRONG_OPTION: str = f"{ERR} {ui['invalid_choice']}"
+    SEPARATOR: str    = "\033[94m----------\033[0m"
+
+    while tui.app_on:
+
+        print(SEPARATOR)
+        tui.show_status()
+        tui.show_options()
+        user_choice: str = input(f"{ui['select_option']}: ").lower()
+        try:
+            selection: Option = tui.options[user_choice]
+        except KeyError:
+            print(WRONG_OPTION)
             continue
-        no_of_recipes += 1
-        recipes_list[str(no_of_recipes)] = filepath
 
-    for recipe_nr, recipe_path in recipes_list.items():
-        print(f"{recipe_nr}: {recipe_path}")
-        
-    select: str = input("Select recipe: ")
-    if select in recipes_list.keys():
-        with open(recipes_list[select]) as data:
-            recipe_data: dict = json.load(data)
-        recipe: Recipe = Recipe()
-        recipe.ui = ui
-        recipe.set_dish_name(recipe_data["dish_name"])
-        recipe.set_servings(recipe_data["servings"])
-        for tag in recipe_data["tags"]:
-            recipe.add_tag(tag)
-        for category, ingredients in recipe_data["ingredients"].items():
-            recipe.add_ingredient_category(category)
-            for ingredient, amount in ingredients.items():
-                recipe.add_ingredient(category, ingredient, amount)
-        for step in recipe_data["preparing_steps"]:
-            recipe.add_preparing_step(step)
-    else:
-        print("Please enter a valid recipe number.")
-        return
+        if user_choice != Key.BACK.value:
+            prev_options.append(tui.options)
 
-    print()
-    recipe.show_dish_name()
-    recipe.show_servings()
-    recipe.show_preparing_steps()
-    print()
-
-"""
-    with open("templates/cooking1.html") as temp:
-        template: Template = Template(temp.read())
-    html: str = template.render(recipe=recipe, ui=ui)
-    HTML(string=html).write_pdf(
-            "pdfs/ziemniaczki_w_sosie_musztardowym.pdf",
-            stylesheets=[CSS("templates/cooking1.css")])
-"""
+        tui.options = selection.run()
+        if prev_options:
+            tui.add_option(Key.BACK.value, Option(ui["back"], actions.back, last_options=prev_options))
+        else:
+            tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, tui=tui))
 
 if __name__ == "__main__":
     main()
