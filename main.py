@@ -6,10 +6,7 @@ from argparse import ArgumentParser
 from os import path, listdir
 from tui import TUI, Option
 import actions
-from shortcuts import Key
-
-ERR: str = "\033[91m[ \u2718 ]\033[0m"
-INFO: str = "\033[96m[i]\033[0m"
+from shortcuts import Key, INF, ERR, OK
 
 def main() -> None:
 
@@ -23,35 +20,36 @@ def main() -> None:
 
     # Define and populate Text User Interface
     tui: TUI = TUI()
+    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], actions.new_recipe, ui=ui, tui=tui, color="\033[92m"))
     tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], actions.get_recipes))
-    tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, tui=tui))
+    tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, color="\033[91m", tui=tui))
     tui.app_on = True
     prev_options: list[dict[str, Option]] = []
 
     # Main TUI loop
-    WRONG_OPTION: str = f"{ERR} {ui['invalid_choice']}"
-    SEPARATOR: str    = "\033[94m----------\033[0m"
+    WRONG_OPTION: str = (ERR, ui["invalid_choice"])
 
     while tui.app_on:
 
-        print(SEPARATOR)
-        tui.show_status()
-        tui.show_options()
+        tui.show()
         user_choice: str = input(f"{ui['select_option']}: ").lower()
+        print()
         try:
             selection: Option = tui.options[user_choice]
+            # Clear statuses only on successful choice
+            # Else recipe's name dissappear from it even when recipe is selected
+            tui.statuses.clear() 
         except KeyError:
-            print(WRONG_OPTION)
+            tui.add_status(WRONG_OPTION)
             continue
 
+        # Prevents setting "back" option on infinite loop
         if user_choice != Key.BACK.value:
             prev_options.append(tui.options)
 
-        tui.options = selection.run()
-        if prev_options:
-            tui.add_option(Key.BACK.value, Option(ui["back"], actions.back, last_options=prev_options))
-        else:
-            tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, tui=tui))
+        tui.options, statuses = selection.run(ui=ui, last_options=prev_options, tui=tui)
+        for status in statuses:
+            tui.add_status(status)
 
 if __name__ == "__main__":
     main()

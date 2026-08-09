@@ -2,19 +2,18 @@
     "servings": "Servings",
     "ingredients": "Ingredients",
     "preparing_steps": "Preparing",
-    "show_recipes_list": "Show recipes list",
-    "convert": "Convert to pdf",
+    "show_recipes_list": "Show saved recipes",
+    "generate_pdf": "Generate PDF",
+    "pdf_generated": "PDF generated successfuly",
     "new_recipe": "New recipe",
     "edit_recipe": "Edit recipe",
     "back": "Back",
     "quit": "Quit",
     "invalid_choice": "Invalid choice",
     "select_option": "Select an option",
-    "select_recipe": "Select a recipe",
     "no_recipes_found": "No recipes found",
-    "number_too_big": "Number is too big",
     "active_recipe": "Choosed recipe",
     "render_pdf": "Render PDF",
     "show_recipe_info": "Show recipe's details",
-    "enter_number": "Enter a number"
+    "enter_dish_name": "Enter dish's name"
 }

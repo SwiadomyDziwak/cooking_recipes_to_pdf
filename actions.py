@@ -5,18 +5,17 @@ from weasyprint import HTML, CSS
 from recipe import Recipe
 from tui import Option, TUI
 from typing import Any
-
-def get_recipes_list() -> list[str]:
-    recipes_list = []
-    for file in listdir("data"):
-        if path.isdir(path.join("data", file)):
-            continue
-        if not file.endswith(".json"):
-            continue
-        recipes_list.append(file)
-    return recipes_list
+from shortcuts import Key, ERR, INF, OK
 
 def load_translation(lang: str) -> dict[str, str]:
+    """Loads UI translations
+
+    Args:
+        lang: Name of the desired translations.
+
+    Returns:
+        ui: Dict of translations.
+    """
     translation_file: str = lang + ".json"
     translation_file_path: str = path.join("data", "ui", translation_file)
     try:
@@ -26,28 +25,23 @@ def load_translation(lang: str) -> dict[str, str]:
         raise Exception("Translation file does not exists")
     return ui
 
-def generate_pdf(ui: dict[str, str], recipe_file: str) -> None:
-    # Receives target file's name and load recipe's data
-    # Then renders finished PDF file
+def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
+    """Generates and creates a PDF file for passed in recipe
 
-    # Set recipe's propeties
-    recipe: Recipe = Recipe()
-    with open(path.join("data", recipe_file)) as f:
-        recipe_data: dict[str, any] = json.load(f)
-    recipe.dish_name = recipe_data["dish_name"]
-    recipe.photo = path.abspath(path.join("data", recipe_data["photo"]))
-    for tag in recipe_data["tags"]:
-        recipe.add_tag(tag)
-    recipe.set_servings(recipe_data["servings"])
-    for category, ingredients in recipe_data["ingredients"].items():
-        recipe.add_ingredient_category(category)
-        for ingredient, amount in ingredients.items():
-            recipe.add_ingredient(category, ingredient, amount)
-    for preparing_step in recipe_data["preparing_steps"]:
-        recipe.add_preparing_step(preparing_step)
+    Kwargs:
+        ui: A dict containing UI translations.
+        recipe: A Recipe object containing all necessary data.
+        last_options: A dict containing shortcut-Option pair to be able to use "Back" option.
+        tui: A TUI object, required for the "Quit" option to function properly.
+
+    Returns:
+        A pair (tuple) containing:
+            options: A dict of previously used shortcut-Option pair.
+            status_list: A list of symbol-message tuple to display statuses
+    """
 
     # Set output file's details
-    output_file: str = recipe_file.removesuffix(".json") + ".pdf"
+    output_file: str = recipe.dish_name.replace(" ", "_").lower() + ".pdf"
     output_path: str = path.join("pdfs", output_file)
 
     # Set template and render the PDF
@@ -61,9 +55,13 @@ def generate_pdf(ui: dict[str, str], recipe_file: str) -> None:
             stylesheets=[CSS(style_path)]
             )
 
-def get_recipes() -> dict[str, Option]:
+    options, status_list = select_recipe(ui=ui, recipe=recipe, last_options=last_options[:-1], tui=tui)
+    status_list.append((OK, ui["pdf_generated"]))
+    return options, status_list
+
+def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
     recipe_number: int = 1
-    recipes: dict[str, Option] = {}
+    options: dict[str, Option] = {}
     for file in listdir("data"):
         if path.isdir(path.join("data", file)):
             # If path is dir, ignore
@@ -89,19 +87,41 @@ def get_recipes() -> dict[str, Option]:
             recipe.add_preparing_step(preparing_step)
 
         # Add recipe to list and increase recipes number for the next loop
-        recipes[str(recipe_number)] = Option(recipe.dish_name, select_recipe, recipe=recipe)
+        options[str(recipe_number)] = Option(recipe.dish_name, select_recipe, recipe=recipe)
         recipe_number += 1
 
-    return recipes
+    options[Key.BACK.value] = Option(ui["back"], back, last_options=last_options)
+    options[Key.QUIT.value] = Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
+    return options, []
 
-def select_recipe(recipe: Recipe) -> dict[str, Option]:
-    print(f"Selected recipe: {recipe.dish_name}")
-    return {}
+def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
 
-def back(last_options) -> dict[str, Option]:
+    # Display recipe's info here
+
+    # Set available options
+    recipe_options: dict[str, Option] = {
+            Key.GENERATE.value: Option(ui["generate_pdf"], generate_pdf, recipe=recipe),
+            Key.BACK.value: Option(ui["back"], back, last_options=last_options),
+            Key.QUIT.value: Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
+            }
+    return recipe_options, [(INF, recipe.dish_name)]
+
+def new_recipe(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
+    new_recipe: Recipe = Recipe()
+    new_dish_name: str = input(f"{ui['enter_dish_name']}: ")
+    new_recipe.set_dish_name(new_dish_name)
+    return {Key.BACK.value: Option(ui["back"], back, last_options=last_options)}, [(INF, new_recipe.dish_name)]
+
+def back(*, ui: dict[str, str], last_options: dict[str, Option], **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
+    status_list: list[tuple[str, str]] = []
+    try:
+        for status in kwargs["statuses"]:
+            status_list.append(status)
+    except KeyError:
+        pass
     last_menu: dict[str, Option] = last_options.pop()
-    return last_menu
+    return last_menu, status_list
 
-def quit_app(tui: TUI):
+def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> tuple[dict, list]:
     tui.app_on = False
-    return {}
+    return {}, []
