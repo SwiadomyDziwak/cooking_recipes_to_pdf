@@ -44,14 +44,20 @@ class TUI:
         return "TUI()"
 
     def add_option(self, shortcut: str, option: Option) -> None:
+        """Adds an option to the menu.
+
+        Args:
+            shortcut: A key used to select the option. Can be a number or a letter.
+            option: An Option object.
+        """
         self.options[shortcut] = option
 
     def clear_options(self) -> None:
         self.options.clear()
 
     def show(self) -> None:
-        # Display every option in a table
-        # If statuses are present, shows them first
+        """Displays every option in a table.
+        If statuses are present, shows them first."""
         table_width: int = self._get_table_width()
         horizontal_line: str = "-" * table_width
         print(horizontal_line)
@@ -62,16 +68,23 @@ class TUI:
             print(horizontal_line)
         for key, option in self.options.items():
             option_width: int = table_width - len(key) - 7
-            print(f"| \033[34m{option.color}{key.upper()}\033[0m | {option.display:<{option_width}} |")
+            print(f"| \033[94m{option.color}{key.upper()}\033[0m | {option.display:<{option_width}} |")
         print(horizontal_line)
 
     def add_status(self, status) -> None:
+        """Appends status icon and text to statuses list.
+
+        Args:
+            status: A tuple containing status icon/symbol and status text.
+        """
         for s in self.statuses:
             if status[1] == s[1]:
                 return
         self.statuses.append(status)
         
     def _get_table_width(self):
+        """Calculates a width to draw the manu table according to the length of statuses and options.
+        Assumes that status icon is a singular symbol."""
         longest: int = 0
         # Check statuses length
         for status in self.statuses:
