@@ -1,12 +1,13 @@
 from jinja2 import Template
 from weasyprint import HTML, CSS
 from recipe import Recipe, AppError
-import json
 from argparse import ArgumentParser
 from os import path, listdir
 from tui import TUI, Option
-import actions
 from shortcuts import Key, INF, ERR, OK
+import json
+import actions
+import new_recipe
 
 def main() -> None:
 
@@ -20,7 +21,7 @@ def main() -> None:
 
     # Define and populate Text User Interface
     tui: TUI = TUI()
-    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], actions.new_recipe, ui=ui, tui=tui))
+    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], new_recipe.create, ui=ui, tui=tui))
     tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], actions.get_recipes))
     tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, color="\033[91m", tui=tui))
     tui.app_on = True

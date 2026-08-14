@@ -6,24 +6,8 @@ from recipe import Recipe
 from tui import Option, TUI
 from typing import Any
 from shortcuts import Key, ERR, INF, OK
-
-def load_translation(lang: str) -> dict[str, str]:
-    """Loads UI translations
-
-    Args:
-        lang: Name of the desired translations.
-
-    Returns:
-        ui: Dict of translations.
-    """
-    translation_file: str = lang + ".json"
-    translation_file_path: str = path.join("data", "ui", translation_file)
-    try:
-        with open(translation_file_path) as f:
-            ui: dict[str, str] = json.load(f)
-    except:
-        raise Exception("Translation file does not exists")
-    return ui
+import new_recipe
+import utilities
 
 def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
     """Generates and creates a PDF file for passed in recipe
@@ -90,41 +74,18 @@ def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI
         options[str(recipe_number)] = Option(recipe.dish_name, select_recipe, recipe=recipe)
         recipe_number += 1
 
-    options[Key.BACK.value] = Option(ui["back"], back, last_options=last_options)
-    options[Key.QUIT.value] = Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
+    options[Key.BACK.value] = Option(ui["back"], utilities.back, last_options=last_options)
+    options[Key.QUIT.value] = Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
     return options, []
 
 def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
-
     # Display recipe's info here
     recipe.show_info(ui=ui)
 
     # Set available options
     recipe_options: dict[str, Option] = {
             Key.GENERATE.value: Option(ui["generate_pdf"], generate_pdf, recipe=recipe),
-            Key.BACK.value: Option(ui["back"], back, last_options=last_options),
-            Key.QUIT.value: Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
+            Key.BACK.value: Option(ui["back"], utilities.back, last_options=last_options),
+            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
             }
     return recipe_options, [(INF, recipe.dish_name)]
-
-def new_recipe(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
-    new_recipe: Recipe = Recipe()
-    new_dish_name: str = input(f"{ui['enter_dish_name']}: ")
-    new_recipe.set_dish_name(new_dish_name)
-
-    options, statuses = select_recipe(ui=ui, last_options=last_options, tui=tui, recipe=new_recipe)
-    return options, statuses
-
-def back(*, ui: dict[str, str], last_options: dict[str, Option], **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
-    status_list: list[tuple[str, str]] = []
-    try:
-        for status in kwargs["statuses"]:
-            status_list.append(status)
-    except KeyError:
-        pass
-    last_menu: dict[str, Option] = last_options.pop()
-    return last_menu, status_list
-
-def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> tuple[dict, list]:
-    tui.app_on = False
-    return {}, []
