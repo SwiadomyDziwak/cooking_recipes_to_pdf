@@ -97,6 +97,7 @@ def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI
 def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
 
     # Display recipe's info here
+    recipe.show_info(ui=ui)
 
     # Set available options
     recipe_options: dict[str, Option] = {
@@ -110,7 +111,9 @@ def new_recipe(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI,
     new_recipe: Recipe = Recipe()
     new_dish_name: str = input(f"{ui['enter_dish_name']}: ")
     new_recipe.set_dish_name(new_dish_name)
-    return {Key.BACK.value: Option(ui["back"], back, last_options=last_options)}, [(INF, new_recipe.dish_name)]
+
+    options, statuses = select_recipe(ui=ui, last_options=last_options, tui=tui, recipe=new_recipe)
+    return options, statuses
 
 def back(*, ui: dict[str, str], last_options: dict[str, Option], **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
     status_list: list[tuple[str, str]] = []

@@ -1,4 +1,5 @@
-from os import path
+from os import path, get_terminal_size
+from textwrap import wrap
 
 class AppError(Exception):
     pass
@@ -78,8 +79,50 @@ class Recipe:
 
     # ---
     # Showing data on call
-    def show_preparing_steps(self) -> None:
+    def show_preparing_steps(self, table_width: int) -> None:
         no_of_steps: int = 0
-        for step in self.preparing_steps:
-            no_of_steps += 1
-            print(f"{no_of_steps}. {step}")
+        steps_total: int = len(self.preparing_steps)
+        for i, step in enumerate(self.preparing_steps):
+            #print(f"| {no_of_steps}. ", end="")
+            steps = wrap(step, table_width - 6 - len(str(steps_total)))
+            for s in steps:
+                print(f"| {s:<{table_width - 4}} |")
+            if i != len(self.preparing_steps) - 1:
+                print(f"| {' ' * (table_width - 4)} |")
+
+    def show_ingredients(self, table_width: int) -> None:
+        for category, ingredients in self.ingredients.items():
+            print(f"| {category:<{table_width - 4}} |")
+            for ingredient, amount in ingredients.items():
+                justify: int = table_width - len(ingredient) - 10
+                print(f"|     {ingredient}: {amount:_>{justify}} |")
+
+    def show_info(self, ui: dict[str, str]) -> None:
+        terminal_width: int = get_terminal_size().columns
+        table_width: int = int(terminal_width / 2) + int(terminal_width * 0.25)
+        hr: str = "-" * table_width
+        print(hr)
+        if self.dish_name:
+            print(f"| {self.dish_name:^{table_width - 4}} |")
+            print(hr)
+        if self.tags:
+            tags_length: int = 4
+            print("| ", end="")
+            for tag in self.tags:
+                if tag is self.tags[-1]:
+                    print(f"{tag:<{table_width - tags_length}}", end="")
+                else:
+                    tags_length += 2
+                    tags_length += len(tag)
+                    print(tag, end=", ")
+            print(" |")
+            print(hr)
+        if self.servings:
+            print(f"| {ui['servings']}: {self.servings:<{table_width - 6 - len(ui['servings'])}} |")
+            print(hr)
+        if self.ingredients:
+            self.show_ingredients(table_width)
+            print(hr)
+        if self.preparing_steps:
+            self.show_preparing_steps(table_width)
+            print(hr)

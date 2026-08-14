@@ -20,7 +20,7 @@ def main() -> None:
 
     # Define and populate Text User Interface
     tui: TUI = TUI()
-    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], actions.new_recipe, ui=ui, tui=tui, color="\033[92m"))
+    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], actions.new_recipe, ui=ui, tui=tui))
     tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], actions.get_recipes))
     tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, color="\033[91m", tui=tui))
     tui.app_on = True
@@ -37,7 +37,7 @@ def main() -> None:
         try:
             selection: Option = tui.options[user_choice]
             # Clear statuses only on successful choice
-            # Else recipe's name dissappear from it even when recipe is selected
+            # Else recipe's name dissappears from it even when recipe is selected
             tui.statuses.clear() 
         except KeyError:
             tui.add_status(WRONG_OPTION)
