@@ -58,7 +58,7 @@ class TUI:
     def show(self) -> None:
         """Displays every option in a table.
         If statuses are present, shows them first."""
-        table_width: int = self._get_table_width()
+        table_width, keys_length = self._get_table_width()
         horizontal_line: str = "-" * table_width
         print(horizontal_line)
         if self.statuses:
@@ -67,8 +67,8 @@ class TUI:
                 print(f"| {status[0]} | {status[1]:<{status_width}} |")
             print(horizontal_line)
         for key, option in self.options.items():
-            option_width: int = table_width - len(key) - 7
-            print(f"| \033[94m{option.color}{key.upper()}\033[0m | {option.display:<{option_width}} |")
+            option_width: int = table_width - keys_length - 7
+            print(f"| \033[94m{option.color}{key.upper():>{keys_length}}\033[0m | {option.display:<{option_width}} |")
         print(horizontal_line)
 
     def add_status(self, status) -> None:
@@ -86,6 +86,7 @@ class TUI:
         """Calculates a width to draw the manu table according to the length of statuses and options.
         Assumes that status icon is a singular symbol."""
         longest: int = 0
+        longest_key: int = 0
         # Check statuses length
         for status in self.statuses:
             length: int = 8
@@ -95,9 +96,11 @@ class TUI:
 
         # Check option lengths
         for key, option in self.options.items():
+            if len(key) > longest_key:
+                longest_key = len(key)
             length: int = 7
             length += len(key)
             length += len(option.display)
             if length > longest:
                 longest = length
-        return longest
+        return longest, longest_key

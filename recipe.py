@@ -29,11 +29,10 @@ class Recipe:
             return
         self.tags.append(tag)
 
-    def remove_tag(self, tag_index: int) -> None:
-        try:
-            del self.tags[tag_index]
-        except:
-            return
+    def remove_tag(self, tag: str) -> None:
+        for i, t in enumerate(self.tags):
+            if t == tag:
+                del self.tags[i]
 
     def set_servings(self, servings: int) -> None:
         self.servings = servings

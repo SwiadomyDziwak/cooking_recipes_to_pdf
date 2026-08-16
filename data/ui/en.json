@@ -16,5 +16,7 @@
     "render_pdf": "Render PDF",
     "show_recipe_info": "Show recipe's details",
     "enter_dish_name": "Enter dish's name",
-    "enter_number": "Enter a valid number"
+    "enter_number": "Enter a valid number",
+    "add_tag": "Add tag",
+    "remove_tag": "Tag to remove"
 }

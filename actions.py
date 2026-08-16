@@ -85,7 +85,9 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str,
     # Set available options
     recipe_options: dict[str, Option] = {
             Key.GENERATE.value: Option(ui["generate_pdf"], generate_pdf, recipe=recipe),
-            "s": Option(ui["servings"], recipe_utilities.set_servings, recipe=recipe),
+            Key.ADD_SERVINGS.value: Option(ui["servings"], recipe_utilities.set_servings, recipe=recipe),
+            Key.ADD_TAG.value: Option(ui["add_tag"], recipe_utilities.add_tag, recipe=recipe),
+            Key.REMOVE_TAG.value: Option(ui["remove_tag"], recipe_utilities.remove_tag, recipe=recipe),
             Key.BACK.value: Option(ui["back"], utilities.back, last_options=last_options),
             Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
             }
