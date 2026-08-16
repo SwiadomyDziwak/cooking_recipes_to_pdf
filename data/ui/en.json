@@ -17,6 +17,9 @@
     "show_recipe_info": "Show recipe's details",
     "enter_dish_name": "Enter dish's name",
     "enter_number": "Enter a valid number",
+    "edit_tags": "Edit tags",
     "add_tag": "Add tag",
-    "remove_tag": "Tag to remove"
+    "tag_added": "Tag added",
+    "remove_tag": "Remove tag",
+    "tag_removed": "Tag removed"
 }

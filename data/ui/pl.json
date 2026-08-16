@@ -17,6 +17,9 @@
     "show_recipe_info": "Pokaż szczegóły przepisu",
     "enter_dish_name": "Podaj nazwę potrawy",
     "enter_number": "Podaj poprawną liczbę",
+    "edit_tags": "Edytuj tagi",
     "add_tag": "Dodaj tag",
-    "remove_tag": "Tag do usunięcia"
+    "tag_added": "Tag dodany",
+    "remove_tag": "Usuń tag",
+    "tag_removed": "Tag usunięty"
 }

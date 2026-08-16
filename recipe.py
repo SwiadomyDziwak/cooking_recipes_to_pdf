@@ -33,6 +33,8 @@ class Recipe:
         for i, t in enumerate(self.tags):
             if t == tag:
                 del self.tags[i]
+                return True
+        return False
 
     def set_servings(self, servings: int) -> None:
         self.servings = servings
