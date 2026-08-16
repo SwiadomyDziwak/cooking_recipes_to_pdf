@@ -15,5 +15,6 @@
     "active_recipe": "Wybrany przepis",
     "render_pdf": "Wygeneruj PDF",
     "show_recipe_info": "Pokaż szczegóły przepisu",
-    "enter_dish_name": "Podaj nazwę potrawy"
+    "enter_dish_name": "Podaj nazwę potrawy",
+    "enter_number": "Podaj poprawną liczbę"
 }

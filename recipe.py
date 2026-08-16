@@ -35,8 +35,8 @@ class Recipe:
         except:
             return
 
-    def set_servings(self, amount: int) -> None:
-        self.servings = amount
+    def set_servings(self, servings: int) -> None:
+        self.servings = servings
 
     def add_ingredient_category(self, category: str) -> None:
         if category in self.ingredients.keys():

@@ -7,7 +7,8 @@ from tui import TUI, Option
 from shortcuts import Key, INF, ERR, OK
 import json
 import actions
-import new_recipe
+import utilities
+import recipe_utilities
 
 def main() -> None:
 
@@ -17,13 +18,13 @@ def main() -> None:
     args = parser.parse_args()
 
     # Load User Interface translations
-    ui: dict[str, str] = actions.load_translation(args.lang)
+    ui: dict[str, str] = utilities.load_translation(args.lang)
 
     # Define and populate Text User Interface
     tui: TUI = TUI()
-    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], new_recipe.create, ui=ui, tui=tui))
+    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], recipe_utilities.create_recipe, ui=ui, tui=tui))
     tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], actions.get_recipes))
-    tui.add_option(Key.QUIT.value, Option(ui["quit"], actions.quit_app, color="\033[91m", tui=tui))
+    tui.add_option(Key.QUIT.value, Option(ui["quit"], utilities.quit_app, color="\033[91m", tui=tui))
     tui.app_on = True
     prev_options: list[dict[str, Option]] = []
 

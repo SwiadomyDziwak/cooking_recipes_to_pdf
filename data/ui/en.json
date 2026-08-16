@@ -15,5 +15,6 @@
     "active_recipe": "Choosed recipe",
     "render_pdf": "Render PDF",
     "show_recipe_info": "Show recipe's details",
-    "enter_dish_name": "Enter dish's name"
+    "enter_dish_name": "Enter dish's name",
+    "enter_number": "Enter a valid number"
 }

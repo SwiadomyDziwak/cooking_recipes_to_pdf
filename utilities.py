@@ -1,6 +1,8 @@
 from os import path
 from tui import TUI, Option
+from recipe import Recipe
 import json
+import actions
 
 def load_translation(lang: str) -> dict[str, str]:
     """Loads UI translations

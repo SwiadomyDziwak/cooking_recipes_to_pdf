@@ -6,8 +6,8 @@ from recipe import Recipe
 from tui import Option, TUI
 from typing import Any
 from shortcuts import Key, ERR, INF, OK
-import new_recipe
 import utilities
+import recipe_utilities
 
 def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
     """Generates and creates a PDF file for passed in recipe
@@ -85,6 +85,7 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str,
     # Set available options
     recipe_options: dict[str, Option] = {
             Key.GENERATE.value: Option(ui["generate_pdf"], generate_pdf, recipe=recipe),
+            "s": Option(ui["servings"], recipe_utilities.set_servings, recipe=recipe),
             Key.BACK.value: Option(ui["back"], utilities.back, last_options=last_options),
             Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
             }
