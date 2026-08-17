@@ -22,7 +22,7 @@ def main() -> None:
 
     # Define and populate Text User Interface
     tui: TUI = TUI()
-    tui.add_option(Key.NEW_RECIPE.value, Option(ui["new_recipe"], recipe_utilities.create_recipe, ui=ui, tui=tui))
+    tui.add_option(Key.NEW.value, Option(ui["new_recipe"], recipe_utilities.create_recipe, ui=ui, tui=tui))
     tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], actions.get_recipes))
     tui.add_option(Key.QUIT.value, Option(ui["quit"], utilities.quit_app, color="\033[91m", tui=tui))
     tui.app_on = True

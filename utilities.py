@@ -25,7 +25,7 @@ def load_translation(lang: str) -> dict[str, str]:
 def back(*, ui: dict[str, str], last_options: dict[str, Option], **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
     status_list: list[tuple[str, str]] = []
     try:
-        for status in kwargs["statuses"]:
+        for status in kwargs["status_list"]:
             status_list.append(status)
     except KeyError:
         pass

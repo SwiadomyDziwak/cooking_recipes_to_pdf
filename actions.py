@@ -44,6 +44,7 @@ def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, 
     return options, status_list
 
 def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
+    """Loads all saved recipes and associates them with a number for selection."""
     recipe_number: int = 1
     options: dict[str, Option] = {}
     for file in listdir("data"):
@@ -79,7 +80,8 @@ def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI
     return options, []
 
 def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
-    # Display recipe's info here
+    """Displays available recipe's info and options to generate a PDF or edit the recipe."""
+
     recipe.show_info(ui=ui)
 
     # Set available options
@@ -87,6 +89,7 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str,
             Key.GENERATE.value: Option(ui["generate_pdf"], generate_pdf, recipe=recipe),
             Key.ADD_SERVINGS.value: Option(ui["servings"], recipe_utilities.set_servings, recipe=recipe),
             Key.TAG_OPTIONS.value: Option(ui["edit_tags"], recipe_utilities.edit_tags, recipe=recipe),
+            Key.INGREDIENTS.value: Option(ui["ingredients"], recipe_utilities.categories_menu, recipe=recipe),
             Key.BACK.value: Option(ui["back"], utilities.back, last_options=last_options),
             Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
             }
