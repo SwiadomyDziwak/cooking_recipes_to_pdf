@@ -1,5 +1,6 @@
 from os import path, get_terminal_size
 from textwrap import wrap
+from shortcuts import ShowInfo
 
 class AppError(Exception):
     pass
@@ -44,6 +45,7 @@ class Recipe:
             raise AppError
             return
         self.ingredients[category] = {}
+        self.ingredients[category]["order"] = len(self.ingredients)
 
     def remove_ingredient_category(self, category: str) -> None:
         try:
@@ -84,29 +86,31 @@ class Recipe:
         no_of_steps: int = 0
         steps_total: int = len(self.preparing_steps)
         for i, step in enumerate(self.preparing_steps):
-            #print(f"| {no_of_steps}. ", end="")
             steps = wrap(step, table_width - 6 - len(str(steps_total)))
             for s in steps:
-                print(f"| {s:<{table_width - 4}} |")
+                if s == steps[0]:
+                    print(f"| {i + 1}. {s:<{table_width - len(str(i)) - 6}} |")
+                else:
+                    print(f"| {' ':<{len(str(i)) + 2}}{s:<{table_width - len(str(i)) - 6}} |")
             if i != len(self.preparing_steps) - 1:
                 print(f"| {' ' * (table_width - 4)} |")
 
     def show_ingredients(self, table_width: int) -> None:
-        for category, ingredients in self.ingredients.items():
+        for category, ingredients in dict(sorted(self.ingredients.items(), key=lambda x: x[1]["order"])).items():
             print(f"| {category:<{table_width - 4}} |")
             for ingredient, amount in ingredients.items():
                 justify: int = table_width - len(ingredient) - 10
                 print(f"|     {ingredient}: {amount:_>{justify}} |")
 
-    def show_info(self, ui: dict[str, str]) -> None:
+    def show_info(self, ui: dict[str, str], flags: int=ShowInfo.FULL_INFO.value) -> None:
         terminal_width: int = get_terminal_size().columns
         table_width: int = int(terminal_width / 2) + int(terminal_width * 0.25)
         hr: str = "-" * table_width
         print(hr)
-        if self.dish_name:
+        if self.dish_name and (flags & ShowInfo.DISH_NAME.value):
             print(f"| {self.dish_name:^{table_width - 4}} |")
             print(hr)
-        if self.tags:
+        if self.tags and (flags & ShowInfo.TAGS.value):
             tags_length: int = 4
             print("| ", end="")
             for tag in self.tags:
@@ -118,12 +122,12 @@ class Recipe:
                     print(tag, end=", ")
             print(" |")
             print(hr)
-        if self.servings:
+        if self.servings and (flags & ShowInfo.SERVINGS.value):
             print(f"| {ui['servings']}: {self.servings:<{table_width - 6 - len(ui['servings'])}} |")
             print(hr)
-        if self.ingredients:
+        if self.ingredients and (flags & ShowInfo.INGREDIENTS.value):
             self.show_ingredients(table_width)
             print(hr)
-        if self.preparing_steps:
+        if self.preparing_steps and (flags & ShowInfo.STEPS.value):
             self.show_preparing_steps(table_width)
             print(hr)

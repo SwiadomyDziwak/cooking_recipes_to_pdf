@@ -9,7 +9,7 @@ from shortcuts import Key, ERR, INF, OK
 import utilities
 import recipe_utilities
 
-def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
+def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
     """Generates and creates a PDF file for passed in recipe
 
     Kwargs:
@@ -39,11 +39,11 @@ def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, 
             stylesheets=[CSS(style_path)]
             )
 
-    options, status_list = select_recipe(ui=ui, recipe=recipe, last_options=last_options[:-1], tui=tui)
-    status_list.append((OK, ui["pdf_generated"]))
-    return options, status_list
+    options, status = select_recipe(ui=ui, recipe=recipe, last_options=last_options[:-1], tui=tui)
+    status.append((OK, ui["pdf_generated"]))
+    return options, status
 
-def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
+def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
     """Loads all saved recipes and associates them with a number for selection."""
     recipe_number: int = 1
     options: dict[str, Option] = {}
@@ -79,7 +79,7 @@ def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI
     options[Key.QUIT.value] = Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
     return options, []
 
-def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]|None]:
+def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
     """Displays available recipe's info and options to generate a PDF or edit the recipe."""
 
     recipe.show_info(ui=ui)
