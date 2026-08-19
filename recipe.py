@@ -99,6 +99,8 @@ class Recipe:
         for category, ingredients in dict(sorted(self.ingredients.items(), key=lambda x: x[1]["order"])).items():
             print(f"| {category:<{table_width - 4}} |")
             for ingredient, amount in ingredients.items():
+                if ingredient == "order":
+                    continue
                 justify: int = table_width - len(ingredient) - 10
                 print(f"|     {ingredient}: {amount:_>{justify}} |")
 

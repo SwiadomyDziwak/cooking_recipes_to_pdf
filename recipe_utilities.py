@@ -4,14 +4,44 @@ from shortcuts import Key, ERR, INF, OK, ShowInfo
 import actions
 import utilities
 
+type menu_options = dict[str, Option]
+type status_list = list[tuple[str, str]]
+type menu = tuple[menu_options, status_list]
+
+def select_recipe(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
+    """Displays available recipe's info and options to generate a PDF or edit the recipe."""
+
+    recipe.show_info(ui=ui)
+
+    # Set available options
+    recipe_options: dict[str, Option] = {
+            Key.GENERATE.value: Option(ui["generate_pdf"], actions.generate_pdf, recipe=recipe),
+            Key.RENAME.value: Option(ui["change_dish_name"], change_dish_name, recipe=recipe),
+            Key.ADD_SERVINGS.value: Option(ui["servings"], set_servings, recipe=recipe),
+            Key.TAG_OPTIONS.value: Option(ui["edit_tags"], edit_tags, recipe=recipe),
+            Key.INGREDIENTS.value: Option(ui["ingredients"], categories_menu, recipe=recipe),
+            Key.BACK.value: Option(ui["back"], utilities.back, last_options=last_options),
+            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
+            }
+    return recipe_options, [(INF, recipe.dish_name)]
+
 def create_recipe(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
     """Creates a new blank recipe."""
     new_recipe: Recipe = Recipe()
     new_dish_name: str = input(f"{ui['enter_dish_name']}: ")
     new_recipe.set_dish_name(new_dish_name)
 
-    options, statuses = actions.select_recipe(ui=ui, last_options=last_options, tui=tui, recipe=new_recipe)
-    return options, statuses
+    options, status = select_recipe(ui=ui, last_options=last_options, tui=tui, recipe=new_recipe)
+    return options, status
+
+def change_dish_name(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, recipe: Recipe, **kwargs) -> menu:
+
+    new_name: str = input(f"{ui['enter_dish_name']}: ")
+    recipe.set_dish_name(new_name)
+
+    options, status = select_recipe(ui=ui, last_options=last_options, tui=tui, recipe=recipe)
+    status.append((OK, ui["dish_name_changed"]))
+    return options, status
 
 def set_servings(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, recipe: Recipe, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
     """Asks for user's input and sets selected recipe's servings to received value."""
@@ -20,7 +50,7 @@ def set_servings(*, ui: dict[str, str], last_options: dict[str, Option], tui: TU
     except TypeError:
         return last_options, (ERR, ui["enter_number"])
     recipe.set_servings(servings)
-    options, status = actions.select_recipe(ui=ui, tui=tui, last_options=last_options, recipe=recipe)
+    options, status = select_recipe(ui=ui, tui=tui, last_options=last_options, recipe=recipe)
     return options, status
 
 # -- Tag editing --

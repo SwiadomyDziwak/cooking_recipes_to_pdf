@@ -3,11 +3,12 @@ from enum import Enum, IntFlag
 class Key(Enum):
     BACK         = "b"
     QUIT         = "q"
-    RECIPES      = "r"
+    RECIPES      = "l"
     GENERATE     = "g"
     NEW          = "n"
     ADD_SERVINGS = "s"
     TAG_OPTIONS  = "t"
+    RENAME       = "r"
     ADD          = "a"
     REMOVE       = "x"
     INGREDIENTS  = "i"
