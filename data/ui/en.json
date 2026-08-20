@@ -23,5 +23,6 @@
     "add_tag": "Add tag",
     "tag_added": "Tag added",
     "remove_tag": "Remove tag",
-    "tag_removed": "Tag removed"
+    "tag_removed": "Tag removed",
+    "new_category": "New category"
 }

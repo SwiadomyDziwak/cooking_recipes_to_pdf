@@ -23,5 +23,6 @@
     "add_tag": "Dodaj tag",
     "tag_added": "Tag dodany",
     "remove_tag": "Usuń tag",
-    "tag_removed": "Tag usunięty"
+    "tag_removed": "Tag usunięty",
+    "new_category": "Nowa kategoria"
 }

@@ -25,10 +25,10 @@ def load_translation(lang: str) -> dict[str, str]:
         raise Exception("Translation file does not exists")
     return ui
 
-def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
+def get_recipes(*, ui: dict[str, str], last_options: MenuOptions, tui: TUI, **kwargs) -> UIResult:
     """Loads all saved recipes and associates them with a number for selection."""
     recipe_number: int = 1
-    options: dict[str, Option] = {}
+    options: MenuOptions = {}
     for file in listdir("data"):
         if path.isdir(path.join("data", file)):
             # If path is dir, ignore
@@ -61,16 +61,20 @@ def get_recipes(*, ui: dict[str, str], last_options: dict[str, Option], tui: TUI
     options[Key.QUIT.value] = Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
     return options, []
 
-def back(*, ui: dict[str, str], last_options: dict[str, Option], **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
+def back(*, ui: dict[str, str], last_options: MenuOptions, **kwargs) -> UIResult:
+    try:
+        kwargs["recipe"].show_info(ui=ui)
+    except KeyError:
+        pass
     status: list[tuple[str, str]] = []
     try:
         for s in kwargs["status_list"]:
             status.append(s)
     except KeyError:
         pass
-    last_menu: dict[str, Option] = last_options.pop()
+    last_menu: MenuOptions = last_options.pop()
     return last_menu, status
 
-def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> tuple[dict, list]:
+def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
     tui.app_on = False
     return {}, []

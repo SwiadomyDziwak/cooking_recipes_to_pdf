@@ -9,7 +9,7 @@ from shortcuts import Key, ERR, INF, OK
 import utilities
 import recipe_utilities
 
-def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: dict[str, Option], tui: TUI, **kwargs) -> tuple[dict[str, Option], list[tuple[str, str]]]:
+def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: MenuOptions, tui: TUI, **kwargs) -> UIResult:
     """Generates and creates a PDF file for passed in recipe
 
     Kwargs:
