@@ -1,6 +1,7 @@
 {
     "servings": "Porcje",
     "ingredients": "Składniki",
+    "tags": "Tagi",
     "preparing_steps": "Przygotowanie",
     "show_recipes_list": "Pokaż zapisane przepisy",
     "generate_pdf": "Wygeneruj PDF",
@@ -24,5 +25,11 @@
     "tag_added": "Tag dodany",
     "remove_tag": "Usuń tag",
     "tag_removed": "Tag usunięty",
-    "new_category": "Nowa kategoria"
+    "new_category": "Nowa kategoria",
+    "remove_category": "Usuń kategorię",
+    "add_ingredient": "Dodaj składnik",
+    "amount": "Ilość",
+    "ingredient_added": "Składnik dodany",
+    "remove_ingredient": "Usuń składnik",
+    "ingredient_removed": "Składnik usunięty"
 }

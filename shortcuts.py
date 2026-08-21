@@ -11,6 +11,7 @@ class Key(Enum):
     RENAME       = "r"
     ADD          = "a"
     REMOVE       = "x"
+    REMOVE2      = "r"
     INGREDIENTS  = "i"
 
 INF = "\033[94mi\033[0m"

@@ -3,6 +3,7 @@ from tui import TUI, Option
 from recipe import Recipe
 from typing import Callable
 from shortcuts import Key
+from datatypes import MenuOptions, StatusList, UIResult
 import json
 import actions
 import recipe_utilities
@@ -25,7 +26,16 @@ def load_translation(lang: str) -> dict[str, str]:
         raise Exception("Translation file does not exists")
     return ui
 
-def get_recipes(*, ui: dict[str, str], last_options: MenuOptions, tui: TUI, **kwargs) -> UIResult:
+def main_menu(*, ui: dict[str, str], tui: TUI) -> UIResult:
+    options = {
+            Key.NEW.value: Option(ui["new_recipe"], recipe_utilities.create_recipe, ui=ui, tui=tui),
+            Key.RECIPES.value: Option(ui["show_recipes_list"], get_recipes, ui=ui, tui=tui),
+            Key.QUIT.value: Option(ui["quit"], quit_app, color="\033[91m", tui=tui)
+            }
+    status = []
+    return options, status
+
+def get_recipes(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
     """Loads all saved recipes and associates them with a number for selection."""
     recipe_number: int = 1
     options: MenuOptions = {}
@@ -57,23 +67,23 @@ def get_recipes(*, ui: dict[str, str], last_options: MenuOptions, tui: TUI, **kw
         options[str(recipe_number)] = Option(recipe.dish_name, recipe_utilities.select_recipe, recipe=recipe)
         recipe_number += 1
 
-    options[Key.BACK.value] = Option(ui["back"], back, last_options=last_options)
+    options[Key.BACK.value] = Option(ui["back"], main_menu, ui=ui, tui=tui)
     options[Key.QUIT.value] = Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
     return options, []
 
-def back(*, ui: dict[str, str], last_options: MenuOptions, **kwargs) -> UIResult:
-    try:
-        kwargs["recipe"].show_info(ui=ui)
-    except KeyError:
-        pass
-    status: list[tuple[str, str]] = []
-    try:
-        for s in kwargs["status_list"]:
-            status.append(s)
-    except KeyError:
-        pass
-    last_menu: MenuOptions = last_options.pop()
-    return last_menu, status
+#def back(*, ui: dict[str, str], last_options: MenuOptions, **kwargs) -> UIResult:
+#    try:
+#        kwargs["recipe"].show_info(ui=ui)
+#    except KeyError:
+#        pass
+#    status: list[tuple[str, str]] = []
+#    try:
+#        for s in kwargs["status_list"]:
+#            status.append(s)
+#    except KeyError:
+#        pass
+#    last_menu: MenuOptions = last_options.pop()
+#    return last_menu, status
 
 def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
     tui.app_on = False

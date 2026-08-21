@@ -25,12 +25,16 @@ class Recipe:
         self.dish_name = name
 
     def add_tag(self, tag: str) -> None:
+        if not tag:
+            return
         if tag in self.tags:
             raise AppError
             return
         self.tags.append(tag)
 
     def remove_tag(self, tag: str) -> None:
+        if not tag:
+            return
         for i, t in enumerate(self.tags):
             if t == tag:
                 del self.tags[i]
@@ -41,42 +45,53 @@ class Recipe:
         self.servings = servings
 
     def add_ingredient_category(self, category: str) -> None:
+        if not category:
+            return
         if category in self.ingredients.keys():
-            raise AppError
             return
         self.ingredients[category] = {}
         self.ingredients[category]["order"] = len(self.ingredients)
 
-    def remove_ingredient_category(self, category: str) -> None:
+    def remove_ingredient_category(self, category: str) -> bool:
         try:
             del self.ingredients[category]
+            return True
         except:
-            return
+            return False
 
     def add_ingredient(self, category: str, ingredient: str, amount: str) -> None:
+        if not ingredient or not amount:
+            return
         try:
             self.ingredients[category][ingredient] = amount
         except KeyError:
             raise AppError
             return
 
-    def remove_ingredient(self, category: str, ingredient: str) -> None:
+    def remove_ingredient(self, category: str, ingredient: str) -> bool:
+        if not ingredient:
+            return False
         try:
             del self.ingredients[category][ingredient]
+            return True
         except:
-            return
+            return False
 
     def add_preparing_step(self, step: str) -> None:
+        if not step:
+            return
         self.preparing_steps.append(step)
 
     def remove_preparing_step(self, step_index: int) -> None:
+        if not step_index:
+            return
         try:
             del self.preparing_steps[step_index]
         except:
             return
 
     def add_photo(self, photo: str) -> None:
-        if photo is None:
+        if not photo:
             return
         self.photo = path.abspath(path.join("data", photo))
 

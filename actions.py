@@ -1,11 +1,12 @@
 from os import path, listdir
-import json
 from jinja2 import Template
 from weasyprint import HTML, CSS
 from recipe import Recipe
 from tui import Option, TUI
 from typing import Any
 from shortcuts import Key, ERR, INF, OK
+from datatypes import MenuOptions, StatusList, UIResult
+import json
 import utilities
 import recipe_utilities
 

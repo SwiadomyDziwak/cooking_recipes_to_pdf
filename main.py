@@ -26,7 +26,7 @@ def main() -> None:
     tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], utilities.get_recipes))
     tui.add_option(Key.QUIT.value, Option(ui["quit"], utilities.quit_app, color="\033[91m", tui=tui))
     tui.app_on = True
-    prev_options: list[dict[str, Option]] = []
+    #prev_options: list[dict[str, Option]] = []
 
     # Main TUI loop
     WRONG_OPTION: str = (ERR, ui["invalid_choice"])
@@ -46,10 +46,10 @@ def main() -> None:
             continue
 
         # Prevents setting "back" option on infinite loop
-        if user_choice != Key.BACK.value:
-            prev_options.append(tui.options)
+        #if user_choice != Key.BACK.value:
+        #    prev_options.append(tui.options)
 
-        tui.options, statuses = selection.run(ui=ui, last_options=prev_options, tui=tui)
+        tui.options, statuses = selection.run(ui=ui, tui=tui)
         for status in statuses:
             tui.add_status(status)
 

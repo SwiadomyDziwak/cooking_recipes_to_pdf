@@ -1,6 +1,7 @@
 {
     "servings": "Servings",
     "ingredients": "Ingredients",
+    "tags": "Tags",
     "preparing_steps": "Preparing",
     "show_recipes_list": "Show saved recipes",
     "generate_pdf": "Generate PDF",
@@ -24,5 +25,11 @@
     "tag_added": "Tag added",
     "remove_tag": "Remove tag",
     "tag_removed": "Tag removed",
-    "new_category": "New category"
+    "new_category": "New category",
+    "remove_category": "Remove category",
+    "add_ingredient": "Add ingredient",
+    "amount": "Amount",
+    "ingredient_added": "Ingredient added",
+    "remove_ingredient": "Remove ingredient",
+    "ingredient_removed": "Ingredient removed"
 }
