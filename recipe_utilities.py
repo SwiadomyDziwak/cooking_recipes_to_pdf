@@ -17,8 +17,9 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> 
             Key.ADD_SERVINGS.value: Option(ui["servings"], set_servings, recipe=recipe),
             Key.TAG_OPTIONS.value: Option(ui["edit_tags"], edit_tags, recipe=recipe),
             Key.INGREDIENTS.value: Option(ui["ingredients"], categories_menu, recipe=recipe),
-            Key.BACK.value: Option(ui["back"], utilities.get_recipes, ui=ui, tui=tui),
-            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
+            Key.STEPS.value: Option(ui["preparing_steps"], preparing_steps_menu, recipe=recipe),
+            Key.BACK.value: Option(ui["back"], utilities.get_recipes),
+            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m")
             }
     return recipe_options, [(INF, recipe.dish_name)]
 
@@ -44,12 +45,12 @@ def set_servings(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> U
     """Asks for user's input and sets selected recipe's servings to received value."""
     try:
         servings: int = int(input(f"{ui['servings']}: "))
-    except TypeError, ValueError:
-        options, status = select_recipe(ui=ui, recipe=recipe, tui=tui)
+    except ValueError:
         status.append((ERR, ui["enter_number"]))
         return options, status
     recipe.set_servings(servings)
-    options, status = select_recipe(ui=ui, tui=tui, recipe=recipe)
+
+    options, status = select_recipe(ui=ui, recipe=recipe, tui=tui)
     return options, status
 
 # -- Tag editing --
@@ -61,8 +62,8 @@ def edit_tags(*, ui: dict[str, str], tui: TUI, recipe: Recipe) -> UIResult:
     options: MenuOptions = {
             Key.ADD.value: Option(ui["add_tag"], add_tag, recipe=recipe),
             Key.REMOVE.value: Option(ui["remove_tag"], remove_tag, recipe=recipe),
-            Key.BACK.value: Option(ui["back"], select_recipe, ui=ui, tui=tui, recipe=recipe),
-            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
+            Key.BACK.value: Option(ui["back"], select_recipe, recipe=recipe),
+            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m")
             }
     status = [(INF, f"{recipe.dish_name} - {ui['tags']}")]
     return options, status
@@ -99,8 +100,8 @@ def categories_menu(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -
         options[str(category_counter)] = Option(category, select_category, recipe=recipe, category=category)
         category_counter += 1
 
-    options[Key.BACK.value] = Option(ui["back"], select_recipe, ui=ui, tui=tui, recipe=recipe)
-    options[Key.QUIT.value] = Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
+    options[Key.BACK.value] = Option(ui["back"], select_recipe, recipe=recipe)
+    options[Key.QUIT.value] = Option(ui["quit"], utilities.quit_app, color="\033[91m")
 
     status = [(INF, f"{recipe.dish_name} - {ui['ingredients']}")]
     return options, status
@@ -108,15 +109,16 @@ def categories_menu(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -
 def select_category(*, ui: dict[str, str], tui: TUI, recipe: Recipe, category: str, **kwargs) -> UIResult:
 
     recipe.show_info(ui=ui, flags=ShowInfo.DISH_NAME.value | ShowInfo.INGREDIENTS.value)
-    options: MenuOptions = {}
+
+    options: MenuOptions = {
+            Key.REMOVE.value: Option(ui["remove_category"], remove_category, recipe=recipe, category=category),
+            Key.ADD.value: Option(ui["add_ingredient"], add_ingredient, recipe=recipe, category=category),
+            Key.REMOVE2.value: Option(ui["remove_ingredient"], remove_ingredient, recipe=recipe, category=category),
+            Key.BACK.value: Option(ui["back"], categories_menu, recipe=recipe),
+            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m")
+            }
+
     status: list[tuple[str, str]] = [(INF, f"{recipe.dish_name} - {category}")]
-
-    options[Key.REMOVE.value] = Option(ui["remove_category"], remove_category, recipe=recipe, category=category)
-    options[Key.ADD.value] = Option(ui["add_ingredient"], add_ingredient, ui=ui, tui=tui, recipe=recipe, category=category)
-    options[Key.REMOVE2.value] = Option(ui["remove_ingredient"], remove_ingredient, ui=ui, tui=tui, recipe=recipe, category=category)
-
-    options[Key.BACK.value] = Option(ui["back"], categories_menu, ui=ui, tui=tui, recipe=recipe)
-    options[Key.QUIT.value] = Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
 
     return options, status
 
@@ -139,7 +141,6 @@ def remove_category(*, ui: dict[str, str], tui: TUI, recipe: Recipe, category: s
 
     recipe.remove_ingredient_category(category)
 
-    options: MenuOptions = {}
     options, status = categories_menu(ui=ui, tui=tui, recipe=recipe)
 
     return options, status
@@ -170,9 +171,42 @@ def remove_ingredient(*, ui: dict[str, str], tui: TUI, recipe: Recipe, category:
     return options, status
 
 # -- Preparing steps editing --
-def add_step() -> None:
-    # Ask where to add - if empty, append to the end of the list
-    pass
+def preparing_steps_menu(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIResult:
+    recipe.show_info(ui=ui, flags=ShowInfo.STEPS.value)
 
-def del_step() -> None:
+    options: MenuOptions = {
+            Key.ADD.value: Option(ui["add_preparing_step"], add_step, ui=ui, tui=tui, recipe=recipe),
+            Key.BACK.value: Option(ui["back"], select_recipe, ui=ui, tui=tui, recipe=recipe),
+            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
+            }
+    status: list[tuple(str, str)] = []
+    return options, status
+
+def add_step(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIResult:
+    # Ask where to add - if empty, append to the end of the list
+    print(ui["add_preparing_step"])
+    input_step: str = input()
+
+    input_position: str = input(f"{ui['preparing_step_position']}: ")
+    if input_position:
+        try:
+            input_position = int(input_position)
+        except ValueError:
+            if not input_position:
+                input_position = None
+            else:
+                options, status = preparing_steps_menu(ui=ui, tui=tui, recipe=recipe)
+                status.append((ERR, ui["enter_number"]))
+                return options, status
+        if input_position > 0:
+            input_position -= 1
+    else:
+        input_position = None
+    recipe.add_preparing_step(input_step, input_position)
+
+    options, status = preparing_steps_menu(ui=ui, tui=tui, recipe=recipe)
+    status.append((OK, ui["preparing_step_added"]))
+    return options, status
+        
+def remove_step() -> None:
     pass

@@ -32,4 +32,7 @@
     "ingredient_added": "Ingredient added",
     "remove_ingredient": "Remove ingredient",
     "ingredient_removed": "Ingredient removed"
+    "add_preparing_step": "Add a preparing step",
+    "preparing_step_position": "Where to insert? (Leave empty to append to end of the list)",
+    "preparing_step_added": "Step added"
 }

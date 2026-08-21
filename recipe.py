@@ -77,10 +77,13 @@ class Recipe:
         except:
             return False
 
-    def add_preparing_step(self, step: str) -> None:
+    def add_preparing_step(self, step: str, position: int|None = None) -> None:
         if not step:
             return
-        self.preparing_steps.append(step)
+        if position is None:
+            self.preparing_steps.append(step)
+        else:
+            self.preparing_steps.insert(position, step)
 
     def remove_preparing_step(self, step_index: int) -> None:
         if not step_index:
