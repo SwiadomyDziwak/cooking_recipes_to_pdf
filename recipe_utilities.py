@@ -175,9 +175,10 @@ def preparing_steps_menu(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwar
     recipe.show_info(ui=ui, flags=ShowInfo.STEPS.value)
 
     options: MenuOptions = {
-            Key.ADD.value: Option(ui["add_preparing_step"], add_step, ui=ui, tui=tui, recipe=recipe),
-            Key.BACK.value: Option(ui["back"], select_recipe, ui=ui, tui=tui, recipe=recipe),
-            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m", ui=ui, tui=tui)
+            Key.ADD.value: Option(ui["add_preparing_step"], add_step, recipe=recipe),
+            Key.REMOVE.value: Option(ui["remove_step"], remove_step, recipe=recipe),
+            Key.BACK.value: Option(ui["back"], select_recipe, recipe=recipe),
+            Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m")
             }
     status: list[tuple(str, str)] = []
     return options, status
@@ -198,8 +199,7 @@ def add_step(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIRes
                 options, status = preparing_steps_menu(ui=ui, tui=tui, recipe=recipe)
                 status.append((ERR, ui["enter_number"]))
                 return options, status
-        if input_position > 0:
-            input_position -= 1
+        input_position -= 1
     else:
         input_position = None
     recipe.add_preparing_step(input_step, input_position)
@@ -208,5 +208,15 @@ def add_step(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIRes
     status.append((OK, ui["preparing_step_added"]))
     return options, status
         
-def remove_step() -> None:
-    pass
+def remove_step(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIResult:
+    input_step_index: str = input(f"{ui['remove_which_step']}: ")
+    try:
+        step_index: int = int(input_step_index)
+    except ValueError:
+        options, status = preparing_steps_menu(ui=ui, tui=tui, recipe=recipe)
+        status.append((ERR, ui["enter_number"]))
+        return options, status
+    step_index -= 1
+    removed: bool = recipe.remove_preparing_step(step_index)
+    options, status = preparing_steps_menu(ui=ui, tui=tui, recipe=recipe)
+    return options, status

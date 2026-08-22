@@ -10,7 +10,7 @@ import json
 import utilities
 import recipe_utilities
 
-def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: MenuOptions, tui: TUI, **kwargs) -> UIResult:
+def generate_pdf(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> UIResult:
     """Generates and creates a PDF file for passed in recipe
 
     Kwargs:
@@ -40,6 +40,6 @@ def generate_pdf(*, ui: dict[str, str], recipe: Recipe, last_options: MenuOption
             stylesheets=[CSS(style_path)]
             )
 
-    options, status = select_recipe(ui=ui, recipe=recipe, last_options=last_options[:-1], tui=tui)
+    options, status = recipe_utilities.select_recipe(ui=ui, recipe=recipe, tui=tui)
     status.append((OK, ui["pdf_generated"]))
     return options, status

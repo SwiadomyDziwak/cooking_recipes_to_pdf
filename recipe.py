@@ -85,13 +85,14 @@ class Recipe:
         else:
             self.preparing_steps.insert(position, step)
 
-    def remove_preparing_step(self, step_index: int) -> None:
+    def remove_preparing_step(self, step_index: int) -> bool:
         if not step_index:
-            return
+            return False
         try:
             del self.preparing_steps[step_index]
+            return True
         except:
-            return
+            return False
 
     def add_photo(self, photo: str) -> None:
         if not photo:

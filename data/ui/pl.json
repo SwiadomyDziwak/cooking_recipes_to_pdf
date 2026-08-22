@@ -32,7 +32,9 @@
     "ingredient_added": "Składnik dodany",
     "remove_ingredient": "Usuń składnik",
     "ingredient_removed": "Składnik usunięty",
-    "add_preparing_step": "Dodaj krok przygotowań",
+    "add_preparing_step": "Dodaj krok",
     "preparing_step_position": "Gdzie wstawić? (Zostaw puste żeby dodać na koniec listy)",
-    "preparing_step_added": "Krok dodany"
+    "preparing_step_added": "Krok dodany",
+    "remove_which_step": "Który krok usunąć?",
+    "remove_step": "Usuń krok"
 }
