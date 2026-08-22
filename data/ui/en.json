@@ -24,7 +24,7 @@
     "add_tag": "Add tag",
     "tag_added": "Tag added",
     "remove_tag": "Remove tag",
-    "tag_removed": "Tag removed",
+    "removed": "Removed",
     "new_category": "New category",
     "remove_category": "Remove category",
     "add_ingredient": "Add ingredient",
@@ -36,5 +36,6 @@
     "preparing_step_position": "Where to insert? (Leave empty to append to end of the list)",
     "preparing_step_added": "Step added",
     "remove_which_step": "Remove which step?",
-    "remove_step": "Remove step"
+    "remove_step": "Remove step",
+    "ask_quit_unsaved": "Are you sure? You have unsaved recipes."
 }

@@ -66,6 +66,9 @@ def get_recipes(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
         # Add recipe to list and increase recipes number for the next loop
         options[str(recipe_number)] = Option(recipe.dish_name, recipe_utilities.select_recipe, recipe=recipe)
         recipe_number += 1
+    for new_recipe in tui.new_recipes:
+        options[str(recipe_number)] = Option(f"*{new_recipe.dish_name}", recipe_utilities.select_recipe, recipe=new_recipe)
+        recipe_number += 1
 
     options[Key.BACK.value] = Option(ui["back"], main_menu, ui=ui, tui=tui)
     options[Key.QUIT.value] = Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
@@ -86,5 +89,13 @@ def get_recipes(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
 #    return last_menu, status
 
 def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
+    message: str = f"{ui['ask_quit_unsaved']} ({Key.YES.value}/{Key.NO.value})"
+    if tui.new_recipes:
+        decision = input(f"{message} ")
+        if decision.lower() == Key.YES.value:
+            tui.app_on = False
+        else:
+            options, status = get_recipes(ui=ui, tui=tui)
+            return options, status
     tui.app_on = False
     return {}, []

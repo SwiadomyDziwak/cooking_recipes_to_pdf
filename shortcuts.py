@@ -14,6 +14,8 @@ class Key(Enum):
     REMOVE2      = "r"
     INGREDIENTS  = "i"
     STEPS        = "p"
+    YES          = "y"
+    NO           = "n"
 
 INF = "\033[94mi\033[0m"
 ERR = "\033[91m\u2718\033[0m"

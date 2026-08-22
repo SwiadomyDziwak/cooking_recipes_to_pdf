@@ -24,7 +24,7 @@
     "add_tag": "Dodaj tag",
     "tag_added": "Tag dodany",
     "remove_tag": "Usuń tag",
-    "tag_removed": "Tag usunięty",
+    "removed": "Usunięto",
     "new_category": "Nowa kategoria",
     "remove_category": "Usuń kategorię",
     "add_ingredient": "Dodaj składnik",
@@ -36,5 +36,6 @@
     "preparing_step_position": "Gdzie wstawić? (Zostaw puste żeby dodać na koniec listy)",
     "preparing_step_added": "Krok dodany",
     "remove_which_step": "Który krok usunąć?",
-    "remove_step": "Usuń krok"
+    "remove_step": "Usuń krok",
+    "ask_quit_unsaved": "Napewno wyjść? Masz niezapisane przepisy."
 }

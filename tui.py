@@ -1,5 +1,6 @@
 from typing import Any
 from collections.abc import Callable
+from recipe import Recipe
 
 class Option:
     """A class that represents a single option."""
@@ -38,6 +39,7 @@ class TUI:
         self.options: dict[str, Option] = {}
         self.statuses: list[tuple[str, str]] = []
         self.app_on: bool = False
+        self.new_recipes: list[Recipe] = []
     def __str__(self) -> str:
         return "Text User Interface"
     def __repr__(self) -> str:

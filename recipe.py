@@ -6,7 +6,7 @@ class AppError(Exception):
     pass
 
 class Recipe:
-    def __init__(self) -> None:
+    def __init__(self, flags: int = 0) -> None:
         self.separator: str = "-" * 15
         self.dish_name: str = None
         self.photo: str = None
@@ -14,6 +14,7 @@ class Recipe:
         self.servings: int = 0
         self.ingredients: dict[str, dict[str, str]] = {}
         self.preparing_steps: list[str] = []
+        self.flags: int = flags
 
     def __str__(self):
         return self.dish_name
@@ -98,6 +99,9 @@ class Recipe:
         if not photo:
             return
         self.photo = path.abspath(path.join("data", photo))
+
+    def mark_not_new(self) -> None:
+        self.flags = self.flags ^ RecipeFlags.NEW.value 
 
     # ---
     # Showing data on call

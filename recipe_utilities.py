@@ -11,7 +11,7 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> 
     recipe.show_info(ui=ui)
 
     # Set available options
-    recipe_options: MenuOptions = {
+    options: MenuOptions = {
             Key.GENERATE.value: Option(ui["generate_pdf"], actions.generate_pdf, recipe=recipe),
             Key.RENAME.value: Option(ui["change_dish_name"], change_dish_name, recipe=recipe),
             Key.ADD_SERVINGS.value: Option(ui["servings"], set_servings, recipe=recipe),
@@ -21,13 +21,16 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> 
             Key.BACK.value: Option(ui["back"], utilities.get_recipes),
             Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m")
             }
-    return recipe_options, [(INF, recipe.dish_name)]
+    if recipe.flags & RecipeFlags.NEW.value:
+        options[Key.BACK.value] = Option(ui["back"], utilities.get_recipes, new_recipes=[recipe])
+    return options, [(INF, recipe.dish_name)]
 
 def create_recipe(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
     """Creates a new blank recipe."""
-    new_recipe: Recipe = Recipe()
+    new_recipe: Recipe = Recipe(flags=RecipeFlags.NEW.value)
     new_dish_name: str = input(f"{ui['enter_dish_name']}: ")
     new_recipe.set_dish_name(new_dish_name)
+    tui.new_recipes.append(new_recipe)
 
     options, status = select_recipe(ui=ui, tui=tui, recipe=new_recipe)
     return options, status
@@ -61,7 +64,7 @@ def edit_tags(*, ui: dict[str, str], tui: TUI, recipe: Recipe) -> UIResult:
 
     options: MenuOptions = {
             Key.ADD.value: Option(ui["add_tag"], add_tag, recipe=recipe),
-            Key.REMOVE.value: Option(ui["remove_tag"], remove_tag, recipe=recipe),
+            Key.REMOVE.value: Option(ui["remove_tag"], tags_removing, recipe=recipe),
             Key.BACK.value: Option(ui["back"], select_recipe, recipe=recipe),
             Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m")
             }
@@ -76,13 +79,25 @@ def add_tag(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIResu
     status.append((OK, ui["tag_added"]))
     return options, status
 
-def remove_tag(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIResult:
-    """Asks for user input and if it exists in recipe's tags, removes it."""
-    tag_to_remove: str = input(f"{ui['remove_tag']}: ")
-    removed = recipe.remove_tag(tag_to_remove)
-    options, status = edit_tags(ui=ui, tui=tui, recipe=recipe)
+def tags_removing(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIResult:
+    options: MenuOptions = {}
+    status: list[tuple[str, str]] = []
+
+    tag_no: int = 1
+    for tag in recipe.tags:
+        options[str(tag_no)] = Option(tag, remove_tag, recipe=recipe, tag=tag)
+        tag_no += 1
+
+    options[Key.BACK.value] = Option(ui["back"], edit_tags, recipe=recipe)
+    options[Key.QUIT.value] = Option(ui["quit"], utilities.quit_app, color="\033[91m")
+
+    return options, status
+def remove_tag(*, ui: dict[str, str], tui: TUI, recipe: Recipe, tag: str, **kwargs) -> UIResult:
+    removed = recipe.remove_tag(tag)
+    
+    options, status = tags_removing(ui=ui, tui=tui, recipe=recipe)
     if removed:
-        status.append((OK, ui["tag_removed"]))
+        status.append((OK, ui["removed"]))
     return options, status
 
 # -- Ingredient categories editing --
