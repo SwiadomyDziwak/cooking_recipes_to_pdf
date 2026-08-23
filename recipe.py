@@ -1,12 +1,12 @@
 from os import path, get_terminal_size
 from textwrap import wrap
-from shortcuts import ShowInfo
+from shortcuts import ShowInfo, RecipeFlags
 
 class AppError(Exception):
     pass
 
 class Recipe:
-    def __init__(self, flags: int = 0) -> None:
+    def __init__(self) -> None:
         self.separator: str = "-" * 15
         self.dish_name: str = None
         self.photo: str = None
@@ -14,9 +14,9 @@ class Recipe:
         self.servings: int = 0
         self.ingredients: dict[str, dict[str, str]] = {}
         self.preparing_steps: list[str] = []
-        self.flags: int = flags
+        self.flags: int = 0
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.dish_name
 
     # ---
@@ -100,8 +100,9 @@ class Recipe:
             return
         self.photo = path.abspath(path.join("data", photo))
 
-    def mark_not_new(self) -> None:
-        self.flags = self.flags ^ RecipeFlags.NEW.value 
+    def mark_edited(self) -> None:
+        self.flags = self.flags | RecipeFlags.EDITED.value 
+        self.dish_name = f"*{self.dish_name}"
 
     # ---
     # Showing data on call

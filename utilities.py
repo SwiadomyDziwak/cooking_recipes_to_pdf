@@ -2,7 +2,7 @@ from os import path, listdir
 from tui import TUI, Option
 from recipe import Recipe
 from typing import Callable
-from shortcuts import Key
+from shortcuts import Key, RecipeFlags
 from datatypes import MenuOptions, StatusList, UIResult
 import json
 import actions
@@ -28,17 +28,15 @@ def load_translation(lang: str) -> dict[str, str]:
 
 def main_menu(*, ui: dict[str, str], tui: TUI) -> UIResult:
     options = {
-            Key.NEW.value: Option(ui["new_recipe"], recipe_utilities.create_recipe, ui=ui, tui=tui),
-            Key.RECIPES.value: Option(ui["show_recipes_list"], get_recipes, ui=ui, tui=tui),
-            Key.QUIT.value: Option(ui["quit"], quit_app, color="\033[91m", tui=tui)
+            Key.NEW.value: Option(ui["new_recipe"], recipe_utilities.create_recipe),
+            Key.RECIPES.value: Option(ui["show_recipes_list"], show_recipes),
+            Key.QUIT.value: Option(ui["quit"], quit_app, color="\033[91m")
             }
     status = []
     return options, status
 
-def get_recipes(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
-    """Loads all saved recipes and associates them with a number for selection."""
-    recipe_number: int = 1
-    options: MenuOptions = {}
+def load_recipes() -> list[Recipe]:
+    recipes: list[Recipe] = []
     for file in listdir("data"):
         if path.isdir(path.join("data", file)):
             # If path is dir, ignore
@@ -63,39 +61,33 @@ def get_recipes(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
         for preparing_step in recipe_data["preparing_steps"]:
             recipe.add_preparing_step(preparing_step)
 
-        # Add recipe to list and increase recipes number for the next loop
-        options[str(recipe_number)] = Option(recipe.dish_name, recipe_utilities.select_recipe, recipe=recipe)
-        recipe_number += 1
-    for new_recipe in tui.new_recipes:
-        options[str(recipe_number)] = Option(f"*{new_recipe.dish_name}", recipe_utilities.select_recipe, recipe=new_recipe)
-        recipe_number += 1
+        # Add recipe to the list
+        recipes.append(recipe)
 
-    options[Key.BACK.value] = Option(ui["back"], main_menu, ui=ui, tui=tui)
-    options[Key.QUIT.value] = Option(ui["quit"], quit_app, color="\033[91m", ui=ui, tui=tui)
-    return options, []
+    return recipes
 
-#def back(*, ui: dict[str, str], last_options: MenuOptions, **kwargs) -> UIResult:
-#    try:
-#        kwargs["recipe"].show_info(ui=ui)
-#    except KeyError:
-#        pass
-#    status: list[tuple[str, str]] = []
-#    try:
-#        for s in kwargs["status_list"]:
-#            status.append(s)
-#    except KeyError:
-#        pass
-#    last_menu: MenuOptions = last_options.pop()
-#    return last_menu, status
+def show_recipes(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
+    options: MenuOptions = {}
+    option_no: int = 1
+    for recipe in tui.recipes:
+        options[str(option_no)] = Option(recipe.dish_name, recipe_utilities.select_recipe, recipe=recipe)
+        option_no += 1
+
+    options[Key.BACK.value] = Option(ui["back"], main_menu)
+    options[Key.QUIT.value] = Option(ui["quit"], quit_app, color="\033[91m")
+    
+    status: StatusList = []
+    return options, status
 
 def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
     message: str = f"{ui['ask_quit_unsaved']} ({Key.YES.value}/{Key.NO.value})"
-    if tui.new_recipes:
-        decision = input(f"{message} ")
-        if decision.lower() == Key.YES.value:
-            tui.app_on = False
-        else:
-            options, status = get_recipes(ui=ui, tui=tui)
-            return options, status
+    for recipe in tui.recipes:
+        if recipe.flags & RecipeFlags.EDITED.value:
+            decision: str = input(f"{message} ")
+            if decision.lower() == Key.YES.value:
+                tui.app_on = False
+            else:
+                options, status = main_menu(ui=ui, tui=tui)
+                return options, status
     tui.app_on = False
     return {}, []

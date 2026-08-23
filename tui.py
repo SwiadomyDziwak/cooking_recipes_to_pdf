@@ -39,7 +39,7 @@ class TUI:
         self.options: dict[str, Option] = {}
         self.statuses: list[tuple[str, str]] = []
         self.app_on: bool = False
-        self.new_recipes: list[Recipe] = []
+        self.recipes: list[Recipe] = []
     def __str__(self) -> str:
         return "Text User Interface"
     def __repr__(self) -> str:
@@ -83,6 +83,9 @@ class TUI:
             if status[1] == s[1]:
                 return
         self.statuses.append(status)
+
+    def add_recipe(self, recipe: Recipe) -> None:
+        self.recipes.append(recipe)
         
     def _get_table_width(self):
         """Calculates a width to draw the manu table according to the length of statuses and options.

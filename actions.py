@@ -25,6 +25,10 @@ def generate_pdf(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> U
             status_list: A list of symbol-message tuple to display statuses
     """
 
+    # Check if recipe was edited and remove asterisk from dish's name
+    if recipe.flags & RecipeFlags.EDITED.value:
+        recipe.dish_name.removeprefix("*")
+
     # Set output file's details
     output_file: str = recipe.dish_name.replace(" ", "_").lower() + ".pdf"
     output_path: str = path.join("pdfs", output_file)
@@ -40,6 +44,8 @@ def generate_pdf(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> U
             stylesheets=[CSS(style_path)]
             )
 
-    options, status = recipe_utilities.select_recipe(ui=ui, recipe=recipe, tui=tui)
+    recipe.mark_edited()
+
+    options, status = recipe_utilities.select_recipe(recipe=recipe)
     status.append((OK, ui["pdf_generated"]))
     return options, status

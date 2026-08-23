@@ -22,9 +22,10 @@ def main() -> None:
 
     # Define and populate Text User Interface
     tui: TUI = TUI()
-    tui.add_option(Key.NEW.value, Option(ui["new_recipe"], recipe_utilities.create_recipe, ui=ui, tui=tui))
-    tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], utilities.get_recipes))
-    tui.add_option(Key.QUIT.value, Option(ui["quit"], utilities.quit_app, color="\033[91m", tui=tui))
+    tui.recipes = utilities.load_recipes()
+    tui.add_option(Key.NEW.value, Option(ui["new_recipe"], recipe_utilities.create_recipe))
+    tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], utilities.show_recipes))
+    tui.add_option(Key.QUIT.value, Option(ui["quit"], utilities.quit_app, color="\033[91m"))
     tui.app_on = True
     #prev_options: list[dict[str, Option]] = []
 
@@ -49,9 +50,7 @@ def main() -> None:
         #if user_choice != Key.BACK.value:
         #    prev_options.append(tui.options)
 
-        tui.options, statuses = selection.run(ui=ui, tui=tui)
-        for status in statuses:
-            tui.add_status(status)
+        tui.options, tui.statuses = selection.run(ui=ui, tui=tui)
 
 if __name__ == "__main__":
     main()

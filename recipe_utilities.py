@@ -1,9 +1,9 @@
-from tui import TUI, Option
 from recipe import Recipe
-from shortcuts import Key, ERR, INF, OK, ShowInfo
+from tui import TUI, Option
+from shortcuts import OK, INF, ERR, ShowInfo, RecipeFlags, Key
 from datatypes import MenuOptions, StatusList, UIResult
-import actions
 import utilities
+import actions
 
 def select_recipe(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> UIResult:
     """Displays available recipe's info and options to generate a PDF or edit the recipe."""
@@ -18,19 +18,18 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> 
             Key.TAG_OPTIONS.value: Option(ui["edit_tags"], edit_tags, recipe=recipe),
             Key.INGREDIENTS.value: Option(ui["ingredients"], categories_menu, recipe=recipe),
             Key.STEPS.value: Option(ui["preparing_steps"], preparing_steps_menu, recipe=recipe),
-            Key.BACK.value: Option(ui["back"], utilities.get_recipes),
+            Key.BACK.value: Option(ui["back"], utilities.show_recipes),
             Key.QUIT.value: Option(ui["quit"], utilities.quit_app, color="\033[91m")
             }
-    if recipe.flags & RecipeFlags.NEW.value:
-        options[Key.BACK.value] = Option(ui["back"], utilities.get_recipes, new_recipes=[recipe])
     return options, [(INF, recipe.dish_name)]
 
 def create_recipe(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
     """Creates a new blank recipe."""
-    new_recipe: Recipe = Recipe(flags=RecipeFlags.NEW.value)
+    new_recipe: Recipe = Recipe()
     new_dish_name: str = input(f"{ui['enter_dish_name']}: ")
     new_recipe.set_dish_name(new_dish_name)
-    tui.new_recipes.append(new_recipe)
+    new_recipe.mark_edited()
+    tui.add_recipe(new_recipe)
 
     options, status = select_recipe(ui=ui, tui=tui, recipe=new_recipe)
     return options, status
@@ -39,6 +38,7 @@ def change_dish_name(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) 
 
     new_name: str = input(f"{ui['enter_dish_name']}: ")
     recipe.set_dish_name(new_name)
+    recipe.mark_edited()
 
     options, status = select_recipe(ui=ui, tui=tui, recipe=recipe)
     status.append((OK, ui["dish_name_changed"]))
@@ -52,6 +52,7 @@ def set_servings(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> U
         status.append((ERR, ui["enter_number"]))
         return options, status
     recipe.set_servings(servings)
+    recipe.mark_edited()
 
     options, status = select_recipe(ui=ui, recipe=recipe, tui=tui)
     return options, status
@@ -75,6 +76,7 @@ def add_tag(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIResu
     """Asks for user input and adds received text as a new tag."""
     tag: str = input(f"{ui['add_tag']}: ")
     recipe.add_tag(tag)
+    recipe.mark_edited()
     options, status = edit_tags(ui=ui, tui=tui, recipe=recipe)
     status.append((OK, ui["tag_added"]))
     return options, status
@@ -97,6 +99,7 @@ def remove_tag(*, ui: dict[str, str], tui: TUI, recipe: Recipe, tag: str, **kwar
     
     options, status = tags_removing(ui=ui, tui=tui, recipe=recipe)
     if removed:
+        recipe.mark_edited()
         status.append((OK, ui["removed"]))
     return options, status
 
@@ -141,6 +144,7 @@ def new_category(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> U
 
     user_input: str = input(f"{ui['new_category']}: ")
     recipe.add_ingredient_category(user_input)
+    recipe.mark_edited()
 
     options, status = select_category(ui=ui, tui=tui, recipe=recipe, category=user_input)
 
@@ -155,6 +159,7 @@ def edit_category() -> None:
 def remove_category(*, ui: dict[str, str], tui: TUI, recipe: Recipe, category: str) -> UIResult:
 
     recipe.remove_ingredient_category(category)
+    recipe.mark_edited()
 
     options, status = categories_menu(ui=ui, tui=tui, recipe=recipe)
 
@@ -166,6 +171,7 @@ def add_ingredient(*, ui: dict[str, str], tui: TUI, recipe: Recipe, category: st
     input_amount: str = input(f"{ui['amount']}: ")
 
     recipe.add_ingredient(category, input_ingredient, input_amount)
+    recipe.mark_edited()
 
     options, status = select_category(ui=ui, tui=tui, recipe=recipe, category=category)
     status.append((OK, ui["ingredient_added"]))
@@ -179,6 +185,7 @@ def remove_ingredient(*, ui: dict[str, str], tui: TUI, recipe: Recipe, category:
     input_ingredient: str = input(f"{ui['remove_ingredient']}: ")
 
     removed = recipe.remove_ingredient(category, input_ingredient)
+    recipe.mark_edited()
 
     options, status = select_category(ui=ui, tui=tui, recipe=recipe, category=category)
     if removed:
@@ -218,6 +225,7 @@ def add_step(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UIRes
     else:
         input_position = None
     recipe.add_preparing_step(input_step, input_position)
+    recipe.mark_edited()
 
     options, status = preparing_steps_menu(ui=ui, tui=tui, recipe=recipe)
     status.append((OK, ui["preparing_step_added"]))
@@ -233,5 +241,7 @@ def remove_step(*, ui: dict[str, str], tui: TUI, recipe: Recipe, **kwargs) -> UI
         return options, status
     step_index -= 1
     removed: bool = recipe.remove_preparing_step(step_index)
+    recipe.mark_edited()
+
     options, status = preparing_steps_menu(ui=ui, tui=tui, recipe=recipe)
     return options, status

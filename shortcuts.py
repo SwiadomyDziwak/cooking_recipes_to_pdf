@@ -28,3 +28,6 @@ class ShowInfo(IntFlag):
     INGREDIENTS = (1 << 3)
     STEPS       = (1 << 4)
     FULL_INFO   = DISH_NAME | TAGS | SERVINGS | INGREDIENTS | STEPS
+
+class RecipeFlags(IntFlag):
+    EDITED = (1 << 0)
