@@ -37,5 +37,7 @@
     "preparing_step_added": "Step added",
     "remove_which_step": "Remove which step?",
     "remove_step": "Remove step",
-    "ask_quit_unsaved": "Are you sure? You have unsaved recipes."
+    "ask_quit_unsaved": "Are you sure? You have unsaved recipes.",
+    "ask_for_filename": "Enter the file name or leave empty to use dish's name.",
+    "export_json": "Export as JSON"
 }

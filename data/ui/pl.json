@@ -37,5 +37,7 @@
     "preparing_step_added": "Krok dodany",
     "remove_which_step": "Który krok usunąć?",
     "remove_step": "Usuń krok",
-    "ask_quit_unsaved": "Napewno wyjść? Masz niezapisane przepisy."
+    "ask_quit_unsaved": "Napewno wyjść? Masz niezapisane przepisy.",
+    "ask_for_filename": "Podaj nazwę pliku lub zostaw puste, żeby użyć nazwy dania.",
+    "export_json": "Wyeksportuj jako JSON"
 }

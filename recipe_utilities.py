@@ -3,7 +3,7 @@ from tui import TUI, Option
 from shortcuts import OK, INF, ERR, ShowInfo, RecipeFlags, Key
 from datatypes import MenuOptions, StatusList, UIResult
 import utilities
-import actions
+import exports
 
 def select_recipe(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> UIResult:
     """Displays available recipe's info and options to generate a PDF or edit the recipe."""
@@ -12,7 +12,8 @@ def select_recipe(*, ui: dict[str, str], recipe: Recipe, tui: TUI, **kwargs) -> 
 
     # Set available options
     options: MenuOptions = {
-            Key.GENERATE.value: Option(ui["generate_pdf"], actions.generate_pdf, recipe=recipe),
+            Key.GENERATE.value: Option(ui["generate_pdf"], exports.generate_pdf, recipe=recipe),
+            Key.EXPORT_JSON.value: Option(ui["export_json"], exports.export_json, recipe=recipe),
             Key.RENAME.value: Option(ui["change_dish_name"], change_dish_name, recipe=recipe),
             Key.ADD_SERVINGS.value: Option(ui["servings"], set_servings, recipe=recipe),
             Key.TAG_OPTIONS.value: Option(ui["edit_tags"], edit_tags, recipe=recipe),

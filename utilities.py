@@ -1,11 +1,10 @@
 from os import path, listdir
 from tui import TUI, Option
 from recipe import Recipe
-from typing import Callable
 from shortcuts import Key, RecipeFlags
 from datatypes import MenuOptions, StatusList, UIResult
 import json
-import actions
+import exports
 import recipe_utilities
 
 def load_translation(lang: str) -> dict[str, str]:
@@ -81,13 +80,18 @@ def show_recipes(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
 
 def quit_app(*, ui: dict[str, str], tui: TUI, **kwargs) -> UIResult:
     message: str = f"{ui['ask_quit_unsaved']} ({Key.YES.value}/{Key.NO.value})"
+    new_recipe_found: bool = False
     for recipe in tui.recipes:
         if recipe.flags & RecipeFlags.EDITED.value:
-            decision: str = input(f"{message} ")
-            if decision.lower() == Key.YES.value:
-                tui.app_on = False
-            else:
-                options, status = main_menu(ui=ui, tui=tui)
-                return options, status
+            new_recipes_found = True
+            break
+
+    if new_recipe_found:
+        decision: str = input(f"{message} ")
+        if decision.lower() == Key.YES.value:
+            tui.app_on = False
+        else:
+            options, status = main_menu(ui=ui, tui=tui)
+            return options, status
     tui.app_on = False
     return {}, []

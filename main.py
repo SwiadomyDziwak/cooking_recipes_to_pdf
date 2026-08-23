@@ -1,12 +1,6 @@
-from jinja2 import Template
-from weasyprint import HTML, CSS
-from recipe import Recipe, AppError
 from argparse import ArgumentParser
-from os import path, listdir
 from tui import TUI, Option
-from shortcuts import Key, INF, ERR, OK
-import json
-import actions
+from shortcuts import Key, ERR
 import utilities
 import recipe_utilities
 
@@ -27,7 +21,6 @@ def main() -> None:
     tui.add_option(Key.RECIPES.value, Option(ui["show_recipes_list"], utilities.show_recipes))
     tui.add_option(Key.QUIT.value, Option(ui["quit"], utilities.quit_app, color="\033[91m"))
     tui.app_on = True
-    #prev_options: list[dict[str, Option]] = []
 
     # Main TUI loop
     WRONG_OPTION: str = (ERR, ui["invalid_choice"])
@@ -40,15 +33,10 @@ def main() -> None:
         try:
             selection: Option = tui.options[user_choice]
             # Clear statuses only on successful choice
-            # Else recipe's name dissappears from it even when recipe is selected
             tui.statuses.clear() 
         except KeyError:
             tui.add_status(WRONG_OPTION)
             continue
-
-        # Prevents setting "back" option on infinite loop
-        #if user_choice != Key.BACK.value:
-        #    prev_options.append(tui.options)
 
         tui.options, tui.statuses = selection.run(ui=ui, tui=tui)
 

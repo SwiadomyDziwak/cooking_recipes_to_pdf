@@ -5,6 +5,7 @@ class Key(Enum):
     QUIT         = "q"
     RECIPES      = "l"
     GENERATE     = "g"
+    EXPORT_JSON  = "j"
     NEW          = "n"
     ADD_SERVINGS = "s"
     TAG_OPTIONS  = "t"

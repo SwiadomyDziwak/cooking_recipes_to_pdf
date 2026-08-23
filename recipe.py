@@ -102,7 +102,12 @@ class Recipe:
 
     def mark_edited(self) -> None:
         self.flags = self.flags | RecipeFlags.EDITED.value 
-        self.dish_name = f"*{self.dish_name}"
+        if not self.dish_name.startswith("*"):
+            self.dish_name = f"*{self.dish_name}"
+    def mark_saved(self) -> None:
+        if self.flags & RecipeFlags.EDITED.value:
+            self.flags ^ RecipeFlags.EDITED.value
+            self.dish_name = self.dish_name.removeprefix("*")
 
     # ---
     # Showing data on call
