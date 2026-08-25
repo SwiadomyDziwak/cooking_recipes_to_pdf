@@ -14,7 +14,7 @@ Current public version: 1.0.0
 `uv run main.py [args]`
 
 Accepted arguments:
-- -l, --lang - Interface language, currently supports "pl" and "en" languages.
+- `-l`, `--lang` - Interface language, currently supports "pl" and "en" languages.
     If not provided, defaults to "en".
 
 ## Requirements
